@@ -1,0 +1,226 @@
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:600,700';
+
+* {font-family: 'Open Sans', sans-serif;}
+
+.rwd-table {
+  margin: auto;
+  min-width: 300px;
+  max-width: 100%;
+  border-collapse: collapse;
+  color: #fff;
+  border: 1px solid #2d2d2d;
+  background: #151619;
+  background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03));
+}
+.table-tabs{
+    margin: auto;
+}
+.rwd-table tr:first-child {
+  border-top: none;
+  background: #151619;
+  border: 1px solid #2d2d2d;
+  background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03));
+  color: #ffffffc7;
+}
+
+.rwd-table tr {
+  border-bottom: 1px solid #2d2d2d;
+  background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03));
+}
+
+.rwd-table tr:nth-child(odd):not(:first-child) {
+    background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03));
+}
+.rwd-table tr:last-child{
+    border-bottom: none;
+}
+.rwd-table th {
+  display: none;
+}
+
+.rwd-table td {
+  display: block;
+  color: white;
+}
+
+.rwd-table td:first-child {
+  margin-top: .5em;
+}
+
+.rwd-table td:last-child {
+  margin-bottom: .5em;
+}
+
+.rwd-table td:before {
+  content: attr(data-th) ": ";
+  font-weight: bold;
+  width: 120px;
+  display: inline-block;
+  color: #fff;
+}
+
+.rwd-table th,
+.rwd-table td {
+  text-align: left;
+}
+
+.rwd-table {
+  color: #333;
+  border-radius: .4em;
+  overflow: hidden;
+}
+
+
+.rwd-table th,
+.rwd-table td {
+  padding: .5em 1em;
+}
+
+/* Status Colors and Backgrounds */
+.rwd-table .status{
+    padding: 6px 10px;
+    text-align: center;
+}
+.rwd-table .status-approved {
+ 
+    background-color: #4caf50; /* Green */
+    color: #fff;
+    border-radius: 9999999px;
+  }
+  
+  .rwd-table .status-pending {
+    background-color: #ff9800; /* Orange */
+    color: #fff;
+    border-radius: 9999999px;
+  }
+  
+  .rwd-table .status-completed {
+    background-color: #2196f3; /* Blue */
+    color: #fff;
+    border-radius: 9999999px;
+  }
+  
+  .rwd-table .status-rejected {
+    background-color: #f44336; /* Red */
+    color: #fff;
+    border-radius: 9999999px;
+  }
+  
+
+/* Sender Arrow */
+.rwd-table .arrow-outgoing {
+    background-image: url('/sender_svg.svg'); /* Adjust this URL to your outgoing arrow image */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #d2252514; /* Red */
+  }
+  
+  /* Receiver Arrow */
+  .rwd-table .arrow-incoming {
+    background-image: url('/receiver_svg.svg'); /* Adjust this URL to your incoming arrow image */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #10bb3514; /* Green */
+  }
+
+
+  .table-user-gradient{
+    width: 30px;
+    height: 30px;
+  }
+
+.table-user{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+@media screen and (max-width: 601px) {
+  .rwd-table tr:nth-child(2) {
+    border-top: none;
+  }
+}
+@media screen and (min-width: 600px) {
+  .rwd-table tr:hover:not(:first-child) {
+    background: hsla(0, 0%, 100%, .08);
+  }
+  .rwd-table td:before {
+    display: none;
+  }
+  .rwd-table th,
+  .rwd-table td {
+    display: table-cell;
+    padding: .25em .5em;
+  }
+  .rwd-table th:first-child,
+  .rwd-table td:first-child {
+    padding-left: 0;
+  }
+  .rwd-table th:last-child,
+  .rwd-table td:last-child {
+    padding-right: 0;
+  }
+  .rwd-table th,
+  .rwd-table td {
+    padding: 1em !important;
+  }
+}
+
+
+/* THE END OF THE IMPORTANT STUFF */
+
+/* Basic Styling */
+
+h1 {
+  text-align: left;
+  font-size: 2.4em;
+  color: #f2f2f2;
+}
+.container {
+  display: block;
+  text-align: center;
+  /* max-width: 1240px; */
+  width: 90%;
+  margin: 0 auto;
+  
+ 
+}
+.inactiveBtn{
+  background: #151619;
+  border: 1px solid #2d2d2d;
+  color: white;
+}
+h3 {
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  font-size: 1.5em;
+  color: #cecece;
+}
+h3:before {
+  content: "\25C0";
+  position: absolute;
+  left: -50px;
+  -webkit-animation: leftRight 2s linear infinite;
+  animation: leftRight 2s linear infinite;
+}
+h3:after {
+  content: "\25b6";
+  position: absolute;
+  right: -50px;
+  -webkit-animation: leftRight 2s linear infinite reverse;
+  animation: leftRight 2s linear infinite reverse;
+}
+@-webkit-keyframes leftRight {
+  0%    { -webkit-transform: translateX(0)}
+  25%   { -webkit-transform: translateX(-10px)}
+  75%   { -webkit-transform: translateX(10px)}
+  100%  { -webkit-transform: translateX(0)}
+}
+@keyframes leftRight {
+  0%    { transform: translateX(0)}
+  25%   { transform: translateX(-10px)}
+  75%   { transform: translateX(10px)}
+  100%  { transform: translateX(0)}
+}
