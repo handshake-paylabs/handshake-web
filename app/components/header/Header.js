@@ -44,15 +44,12 @@ export default function Header() {
           <Link href="/" className="shrink-0">
             <div className="flex items-center">
               <Image
-                width={35}
-                height={35}
-                src="/img/hands2.png"
+                width={140}
+                height={50}
+                src="/img/handshake_logo.png"
                 className="hidden dark:block"
                 alt=""
               />
-              <span className={`${concert_One.className} text-4xl ml-2`}>
-                HandShake
-              </span>
             </div>
           </Link>
 

@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./TransactionReqList.css";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import TransactionReqActionModal from "./Modal/TransactionReqActionModal";
 import AddressWithCopy from "./AddressWithCopy";
 import { useRouter } from "next/navigation";
+import Blockies from "react-blockies";
+import { useAccount, useBalance } from "wagmi";
 // Sample data
 export const transactions = [
   {
@@ -50,11 +52,17 @@ export const transactions = [
 ];
 
 const TransactionReqList = () => {
+  const { address } = useAccount();
+
+  const balance = useBalance({
+    address: address ? address : "",
+  });
+
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("all");
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const address = "0x5A6b7C8d9E0F1234567890123456789012345678";
+  // const address = "0x5A6b7C8d9E0F1234567890123456789012345678";
   const openModal = (transaction) => {
     setSelectedTransaction(transaction);
     setIsModalOpen(true);
@@ -66,7 +74,16 @@ const TransactionReqList = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-
+  const fetchSVG = async (value) => {
+    try {
+      // Replace with the desired value
+      const response = await fetch(`/api/gradient?value=${value}`);
+      const svgData = await response.text();
+      return svgData;
+    } catch (error) {
+      console.error("Error fetching SVG:", error);
+    }
+  };
   const filteredTransactions =
     activeTab === "all"
       ? transactions
@@ -76,151 +93,155 @@ const TransactionReqList = () => {
       ? transactions.filter((transaction) => transaction.receiver === address)
       : transactions;
   return (
-    <div className=" container pt-[200px]">
-      <div className="flex items-center justify-between">
-        <h1>Transaction Requests</h1>
-        <button className="initiateBtn" onClick={openModal}>
-          Initiate
-        </button>
-      </div>
-      <div className="table-tabs pt-4">
-        <div className="flex justify-left space-x-4 mt-4 py-4">
-          <button
-            className={`px-4 py-2 rounded ${
-              activeTab === "all" ? "bg-blue-500 text-white" : "inactiveBtn"
-            }`}
-            onClick={() => handleTabChange("all")}
-          >
-            All
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              activeTab === "initiated"
-                ? "bg-blue-500 text-white"
-                : "inactiveBtn"
-            }`}
-            onClick={() => handleTabChange("initiated")}
-          >
-            Initiated
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              activeTab === "received"
-                ? "bg-blue-500 text-white"
-                : "inactiveBtn"
-            }`}
-            onClick={() => handleTabChange("received")}
-          >
-            Received
-          </button>
+    <>
+      <div className="container-parent">
+        <h1 className="reqheader">Transaction Requests</h1>
+        <div className=" container ">
+          <div className="flex items-center justify-between my-4 px-4">
+            <div className="balance text-black">
+              Balance: {balance?.data?.formatted} BTT
+            </div>
+            <button className="initiateBtn" onClick={openModal}>
+              Initiate Request
+            </button>
+          </div>
+          <div className="table-tabs px-4">
+            <div className="flex justify-left space-x-4 ">
+              <button
+                className={`px-4 py-2 rounded ${
+                  activeTab === "all" ? "activeTabBtn" : "inactiveBtn"
+                }`}
+                onClick={() => handleTabChange("all")}
+              >
+                All
+              </button>
+              <button
+                className={`px-4 py-2 rounded ${
+                  activeTab === "initiated" ? "activeTabBtn" : "inactiveBtn"
+                }`}
+                onClick={() => handleTabChange("initiated")}
+              >
+                Initiated
+              </button>
+              <button
+                className={`px-4 py-2 rounded ${
+                  activeTab === "received" ? "activeTabBtn" : "inactiveBtn"
+                }`}
+                onClick={() => handleTabChange("received")}
+              >
+                Received
+              </button>
+            </div>
+          </div>
+          <div className="overflow-x-auto mt-8 w-full mb-8">
+            <table className="rwd-table w-full">
+              <tbody>
+                <tr>
+                  <th>.</th>
+                  <th>No.</th>
+                  <th>Sender</th>
+                  <th>Receiver</th>
+                  <th>Amount</th>
+                  <th>Token</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+                {filteredTransactions.length > 0 ? (
+                  filteredTransactions.map((transaction) => (
+                    <tr key={transaction.id}>
+                      <td
+                        data-th="Arrow"
+                        className={`${
+                          transaction.sender === address
+                            ? "arrow-outgoing"
+                            : "arrow-incoming"
+                        }`}
+                      ></td>
+                      <td data-th="No.">{transaction.id}</td>
+                      <td data-th="Sender">
+                        <div className="table-user">
+                          <Blockies
+                            className="table-user-gradient"
+                            seed={
+                              transaction.sender ? transaction.sender : null
+                            }
+                            size={8}
+                            scale={3}
+                          />
+
+                          <div className="table-user-details">
+                            {transaction.sender === address ? (
+                              "You"
+                            ) : (
+                              <AddressWithCopy address={transaction.sender} />
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td data-th="Receiver">
+                        <div className="table-user">
+                          <Blockies
+                            className="table-user-gradient"
+                            seed={
+                              transaction.receiver ? transaction.receiver : null
+                            }
+                            size={8}
+                            scale={3}
+                          />
+                          <div className="table-user-details">
+                            {transaction.receiver === address ? (
+                              "You"
+                            ) : (
+                              <AddressWithCopy address={transaction.receiver} />
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td data-th="Amount">{transaction.amount}</td>
+                      <td data-th="Token">
+                        {transaction.token === "BTTC" ||
+                        transaction.token === "SHAKE"
+                          ? transaction.token
+                          : "Unknown"}
+                      </td>
+                      <td data-th="Date">{transaction.date}</td>
+                      <td data-th="Status">
+                        <div
+                          className={`status status-${transaction.status.toLowerCase()}`}
+                        >
+                          {transaction.status}
+                        </div>
+                      </td>
+                      <td data-th="Action">
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/transaction-request/${transaction.id}`
+                            )
+                          }
+                          className="text-indigo-500 hover:text-indigo-800"
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <SkeletonTheme baseColor="#202020" highlightColor="#444">
+                    <p>
+                      <Skeleton count={5} />
+                    </p>
+                  </SkeletonTheme>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {isModalOpen && <TransactionReqActionModal onClose={closeModal} />}
         </div>
       </div>
-      <div className="overflow-x-auto mt-4">
-        <table className="rwd-table">
-          <tbody>
-            <tr>
-              <th>.</th>
-              <th>No.</th>
-              <th>Sender</th>
-              <th>Receiver</th>
-              <th>Amount</th>
-              <th>Token</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-            {filteredTransactions.length > 0 ? (
-              filteredTransactions.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td
-                    data-th="Arrow"
-                    className={`${
-                      transaction.sender === address
-                        ? "arrow-outgoing"
-                        : "arrow-incoming"
-                    }`}
-                  ></td>
-                  <td data-th="No.">{transaction.id}</td>
-                  <td data-th="Sender">
-                    <div className="table-user">
-                      <img
-                        src={
-                          transaction.sender
-                            ? `http://localhost:3333/${transaction.sender}`
-                            : null
-                        }
-                        className="table-user-gradient"
-                        alt="test"
-                      />
-                      <div className="table-user-details">
-                        {transaction.sender === address ? (
-                          "You"
-                        ) : (
-                          <AddressWithCopy address={transaction.sender} />
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td data-th="Receiver">
-                    <div className="table-user">
-                      <img
-                        src={
-                          transaction.receiver
-                            ? `http://localhost:3333/${transaction.receiver}`
-                            : null
-                        }
-                        className="table-user-gradient"
-                        alt="test"
-                      />
-                      <div className="table-user-details">
-                        {transaction.receiver === address ? (
-                          "You"
-                        ) : (
-                          <AddressWithCopy address={transaction.receiver} />
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td data-th="Amount">{transaction.amount}</td>
-                  <td data-th="Token">
-                    {transaction.token === "BTTC" ||
-                    transaction.token === "SHAKE"
-                      ? transaction.token
-                      : "Unknown"}
-                  </td>
-                  <td data-th="Date">{transaction.date}</td>
-                  <td data-th="Status">
-                    <div
-                      className={`status status-${transaction.status.toLowerCase()}`}
-                    >
-                      {transaction.status}
-                    </div>
-                  </td>
-                  <td data-th="Action">
-                    <button
-                      onClick={() =>
-                        router.push(`/transaction-request/${transaction.id}`)
-                      }
-                      className="text-indigo-500 hover:text-indigo-800"
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <SkeletonTheme baseColor="#202020" highlightColor="#444">
-                <p>
-                  <Skeleton count={5} />
-                </p>
-              </SkeletonTheme>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {isModalOpen && <TransactionReqActionModal onClose={closeModal} />}
-    </div>
+    </>
   );
 };
 

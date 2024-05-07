@@ -1,15 +1,13 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import SectionOne from "./components/landingPage/SectionOne";
+import "../app/components/landingPage/landingpage.css";
+import SectionTwo from "./components/landingPage/SectionTwo";
 
 export default function Home() {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-end",
-        padding: 12,
-      }}
-    >
-      <ConnectButton />
-    </div>
+    <>
+      <SectionOne />
+      <SectionTwo />
+    </>
   );
 }
