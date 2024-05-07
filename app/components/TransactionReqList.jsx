@@ -56,22 +56,23 @@ const TransactionReqList = () => {
   const [transactions, setTransaction] = useState([]);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      const url =
-        "/api/fetch-transaction?address=0xF0F21D6AAc534345E16C2DeE12c3998A4e32e789&type=all";
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log(data);
-        setTransaction(data);
-        // Assuming the API returns a single transaction object
-      } catch (error) {
-        console.error("Failed to fetch transactions:", error);
-      }
-    };
+    if (address) {
+      const fetchTransactions = async () => {
+        const url = `/api/fetch-transaction?address=${address}&type=all`;
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          console.log(data);
+          setTransaction(data);
+          // Assuming the API returns a single transaction object
+        } catch (error) {
+          console.error("Failed to fetch transactions:", error);
+        }
+      };
+    }
 
     fetchTransactions();
-  }, []);
+  }, [address]);
   const balance = useBalance({
     address: address ? address : "",
   });
