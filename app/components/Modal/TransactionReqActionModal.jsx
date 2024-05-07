@@ -143,15 +143,29 @@ const TransactionReqActionModal = ({ onClose }) => {
     <div className="popup-overlay">
       <div className="popup-container">
         <div className="popup-card">
-          <h1 className="text-center">Send Transaction</h1>
+          <div className="flex justify-end cursor-pointer">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+              onClick={onClose}
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z" />
+            </svg>
+          </div>
+          <h1 className="text-left">Send Transaction</h1>
 
           <div className="my-6 flex flex-col item-center justify-center w-full">
             <div className="w-full inputParent">
-              <label>Receiver:</label>
+              <label>Receiver Address</label>
               <input
                 type="text"
                 name="receiver"
                 placeholder="Receiver's Address"
+                className="text-black"
                 value={transaction.receiver || ""}
                 onChange={handleInputChange}
               />
@@ -159,42 +173,64 @@ const TransactionReqActionModal = ({ onClose }) => {
 
             <div className="w-full inputParent">
               <label>Type:</label>
-              <div className="flex items-center">
+              <div
+                className="flex items-center cursor-pointer inputDiv"
+                onClick={handleCheckboxChange}
+              >
                 <input
                   type="checkbox"
                   checked={isERC20}
-                  onChange={handleCheckboxChange}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
                 />
-                <span className="ml-2">Send ERC-20 Token</span>
+                <span className="ml-2 checkmark text-black">
+                  Send ERC-20 Token
+                </span>
               </div>
             </div>
 
             {isERC20 && (
-              <div className="w-full inputParent">
-                <label>Token:</label>
-                <input
-                  type="text"
-                  name="token"
-                  placeholder="Token Address"
-                  value={transaction.token || ""}
-                  onChange={handleInputChange}
-                />
-                <button onClick={loadTokenDetails}>Load Token</button>
-              </div>
+              <>
+                <div className="w-full inputParent">
+                  <label>Token:</label>
+                  <input
+                    type="text"
+                    name="token"
+                    placeholder="Token Address"
+                    className="text-black"
+                    value={transaction.token || ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <button onClick={loadTokenDetails} className="load-token">
+                  Load Token
+                </button>
+              </>
             )}
             {tokenDetails.name && (
-              <div className="token-details">
-                <p>Name: {tokenDetails.name}</p>
-                <p>Symbol: {tokenDetails.symbol}</p>
-                <p>
+              <div className="token-details text-left flex flex-col px-4">
+                <span className="text-slate-600 text-base my-4 ">
+                  Name:{" "}
+                  <span className="text-black text-xl font-bold">
+                    {tokenDetails.name}
+                  </span>{" "}
+                </span>
+                <span className="text-slate-600 text-base my-4">
+                  Symbol:{" "}
+                  <span className="text-black text-xl font-bold">
+                    {tokenDetails.symbol}
+                  </span>
+                </span>
+                <span className="text-slate-600 text-base my-4">
                   Total Balance:{" "}
-                  {tokenDetails.balance
-                    ? `${formatUnits(
-                        tokenDetails.balance,
-                        tokenDetails.decimals
-                      )} ${tokenDetails.symbol}`
-                    : null}
-                </p>
+                  <span className="text-black text-xl font-bold">
+                    {tokenDetails.balance
+                      ? `${formatUnits(
+                          tokenDetails.balance,
+                          tokenDetails.decimals
+                        )} ${tokenDetails.symbol}`
+                      : null}
+                  </span>
+                </span>
               </div>
             )}
 
@@ -204,6 +240,7 @@ const TransactionReqActionModal = ({ onClose }) => {
                 type="text"
                 name="amount"
                 placeholder="Enter Amount"
+                className="text-black"
                 value={transaction.amount || ""}
                 onChange={handleInputChange}
               />
