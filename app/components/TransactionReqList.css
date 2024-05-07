@@ -7,20 +7,19 @@
   min-width: 300px;
   max-width: 100%;
   border-collapse: collapse;
-  color: #fff;
+  color: black;
   border: 1px solid #2d2d2d;
-  background: #151619;
-  background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03));
+  background: white;
 }
 .table-tabs{
-    margin: auto;
+    margin: 0 auto;
+    background-color: #ffffffc7;
 }
+
 .rwd-table tr:first-child {
   border-top: none;
-  background: #151619;
   border: 1px solid #2d2d2d;
-  background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03));
-  color: #ffffffc7;
+  color: #12141e99;
 }
 
 .rwd-table tr {
@@ -40,7 +39,7 @@
 
 .rwd-table td {
   display: block;
-  color: white;
+  color: #12141e99;
 }
 
 .rwd-table td:first-child {
@@ -56,7 +55,7 @@
   font-weight: bold;
   width: 120px;
   display: inline-block;
-  color: #fff;
+  color: #12141e99;
 }
 
 .rwd-table th,
@@ -83,26 +82,26 @@
 }
 .rwd-table .status-approved {
  
-    background-color: #4caf50; /* Green */
-    color: #fff;
+    background-color: #30cb832a; /* Green */
+    color: #30cb83;
     border-radius: 9999999px;
   }
   
   .rwd-table .status-pending {
-    background-color: #ff9800; /* Orange */
-    color: #fff;
+    background-color: #9b59b62a; /* Orange */
+    color: #9b59b6;
     border-radius: 9999999px;
   }
   
   .rwd-table .status-completed {
-    background-color: #2196f3; /* Blue */
-    color: #fff;
+    background-color: #54a0ff2a; /* Blue */
+    color: #54a0ff;
     border-radius: 9999999px;
   }
   
   .rwd-table .status-rejected {
-    background-color: #f44336; /* Red */
-    color: #fff;
+    background-color: #f443362a; /* Red */
+    color: #f44336;
     border-radius: 9999999px;
   }
   
@@ -127,6 +126,7 @@
   .table-user-gradient{
     width: 30px;
     height: 30px;
+    border-radius: 6px;
   }
 
 .table-user{
@@ -174,22 +174,42 @@
 
 h1 {
   text-align: left;
-  font-size: 2.4em;
-  color: #f2f2f2;
+  font-size: 1.5em;
+  font-weight: 700;
+  color: black;
+}
+.container-parent{
+  width: 90%;
+  margin: 100px auto;
 }
 .container {
   display: block;
   text-align: center;
+  background-color: white;
   /* max-width: 1240px; */
-  width: 90%;
-  margin: 0 auto;
-  
+  width: 100%;
+  /* margin: 0 auto; */
+  height: max-content;
+  margin: 30px 0;
+  padding: 0;
+  border-radius: 10px;
+  box-shadow: rgba(204, 204, 204, 0.25) 0px 0px 6px 3px;
+    border: 1px solid rgb(224, 224, 224);
  
 }
+.activeTabBtn{
+  color: #10BB35;
+  background-color: #10BB3514;
+  border-radius: 6px;
+}
+
 .inactiveBtn{
-  background: #151619;
-  border: 1px solid #2d2d2d;
-  color: white;
+  background: none;
+ border-radius: 6px;
+  color: #12141e61;
+}
+.inactiveBtn:hover{
+  background-color: rgba(18, 20, 30, 0.04);
 }
 h3 {
   display: inline-block;
