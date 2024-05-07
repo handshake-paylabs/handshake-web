@@ -1,12 +1,32 @@
 "use client";
-import { transactions } from "@/app/components/TransactionReqList";
+
 import Header from "@/app/components/header/Header";
+import { useEffect, useState } from "react";
 
 export default function TransactionRequestDetails({ params }) {
+  const [transactions, setTransaction] = useState([]);
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const url =
+        "/api/fetch-transaction?address=0xF0F21D6AAc534345E16C2DeE12c3998A4e32e789&type=all";
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+        setTransaction(data); // Assuming the API returns a single transaction object
+      } catch (error) {
+        console.error("Failed to fetch transactions:", error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
   console.log(params?.id);
   let id = params?.id ? params.id : 0;
   console.log(transactions);
-  const transaction = transactions.find((transaction) => transaction.id == id);
+  const transaction = transactions.find(
+    (transaction) => transaction.TransactionId == id
+  );
 
   if (!transaction) {
     // Handle case when transaction is not found
@@ -22,7 +42,7 @@ export default function TransactionRequestDetails({ params }) {
           <div className="my-6 flex flex-col item-center justify-center w-full">
             <div className="w-full inputParent">
               <label>ID:</label>
-              <input type="text" value={transaction.id} readOnly />
+              <input type="text" value={transaction.TransactionId} readOnly />
             </div>
             <div className="w-full inputParent">
               <label>Sender:</label>

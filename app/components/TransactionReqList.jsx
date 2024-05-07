@@ -8,52 +8,68 @@ import { useRouter } from "next/navigation";
 import Blockies from "react-blockies";
 import { useAccount, useBalance } from "wagmi";
 // Sample data
-export const transactions = [
-  {
-    id: 1,
-    sender: "0x0A1b2C3d4E5F678901234567890123456789012",
-    receiver: "0x5A6b7C8d9E0F1234567890123456789012345678",
-    amount: "100",
-    token: "BTTC",
-    date: "2024-05-07",
-    status: "Approved",
-    type: "initiated",
-  },
-  {
-    id: 2,
-    sender: "0x5A6b7C8d9E0F1234567890123456789012345678",
-    receiver: "0x0A1b2C3d4E5F678901234567890123456789012",
-    amount: "10000",
-    token: "BTTC",
-    date: "2024-05-06",
-    status: "Pending",
-    type: "received",
-  },
-  {
-    id: 3,
-    sender: "0x0A1b2C3d4E5F678901234567890123456789012",
-    receiver: "0x5A6b7C8d9E0F1234567890123456789012345678",
-    amount: "5000",
-    token: "SHAKE",
-    date: "2024-05-05",
-    status: "Completed",
-    type: "initiated",
-  },
-  {
-    id: 4,
-    sender: "0x5A6b7C8d9E0F1234567890123456789012345678",
-    receiver: "0x0A1b2C3d4E5F678901234567890123456789012",
-    amount: "1000",
-    token: "SHAKE",
-    date: "2024-05-04",
-    status: "Rejected",
-    type: "received",
-  },
-];
+// export const transactions = [
+//   {
+//     id: 1,
+//     senderAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
+//     receiverAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
+//     amount: "100",
+//     token: "BTTC",
+//     date: "2024-05-07",
+//     status: "Approved",
+//     type: "initiated",
+//   },
+//   {
+//     id: 2,
+//     senderAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
+//     receiverAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
+//     amount: "10000",
+//     token: "BTTC",
+//     date: "2024-05-06",
+//     status: "Pending",
+//     type: "received",
+//   },
+//   {
+//     id: 3,
+//     senderAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
+//     receiverAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
+//     amount: "5000",
+//     token: "SHAKE",
+//     date: "2024-05-05",
+//     status: "Completed",
+//     type: "initiated",
+//   },
+//   {
+//     id: 4,
+//     senderAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
+//     receiverAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
+//     amount: "1000",
+//     token: "SHAKE",
+//     date: "2024-05-04",
+//     status: "Rejected",
+//     type: "received",
+//   },
+// ];
 
 const TransactionReqList = () => {
   const { address } = useAccount();
+  const [transactions, setTransaction] = useState([]);
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const url =
+        "/api/fetch-transaction?address=0xF0F21D6AAc534345E16C2DeE12c3998A4e32e789&type=all";
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+        setTransaction(data); // Assuming the API returns a single transaction object
+      } catch (error) {
+        console.error("Failed to fetch transactions:", error);
+      }
+    };
 
+    fetchTransactions();
+  }, []);
   const balance = useBalance({
     address: address ? address : "",
   });
@@ -88,9 +104,13 @@ const TransactionReqList = () => {
     activeTab === "all"
       ? transactions
       : activeTab === "initiated"
-      ? transactions.filter((transaction) => transaction.sender === address)
+      ? transactions.filter(
+          (transaction) => transaction.senderAddress === address
+        )
       : activeTab === "received"
-      ? transactions.filter((transaction) => transaction.receiver === address)
+      ? transactions.filter(
+          (transaction) => transaction.receiverAddress === address
+        )
       : transactions;
   return (
     <>
@@ -149,32 +169,36 @@ const TransactionReqList = () => {
                 </tr>
                 {filteredTransactions.length > 0 ? (
                   filteredTransactions.map((transaction) => (
-                    <tr key={transaction.id}>
+                    <tr key={transaction.TransactionId}>
                       <td
                         data-th="Arrow"
                         className={`${
-                          transaction.sender === address
+                          transaction.senderAddress === address
                             ? "arrow-outgoing"
                             : "arrow-incoming"
                         }`}
                       ></td>
-                      <td data-th="No.">{transaction.id}</td>
+                      <td data-th="No.">{transaction.TransactionId}</td>
                       <td data-th="Sender">
                         <div className="table-user">
                           <Blockies
                             className="table-user-gradient"
                             seed={
-                              transaction.sender ? transaction.sender : null
+                              transaction.senderAddress
+                                ? transaction.senderAddress
+                                : null
                             }
                             size={8}
                             scale={3}
                           />
 
                           <div className="table-user-details">
-                            {transaction.sender === address ? (
+                            {transaction.senderAddress === address ? (
                               "You"
                             ) : (
-                              <AddressWithCopy address={transaction.sender} />
+                              <AddressWithCopy
+                                address={transaction.senderAddress}
+                              />
                             )}
                           </div>
                         </div>
@@ -184,40 +208,43 @@ const TransactionReqList = () => {
                           <Blockies
                             className="table-user-gradient"
                             seed={
-                              transaction.receiver ? transaction.receiver : null
+                              transaction.receiverAddress
+                                ? transaction.receiverAddress
+                                : null
                             }
                             size={8}
                             scale={3}
                           />
                           <div className="table-user-details">
-                            {transaction.receiver === address ? (
+                            {transaction.receiverAddress === address ? (
                               "You"
                             ) : (
-                              <AddressWithCopy address={transaction.receiver} />
+                              <AddressWithCopy
+                                address={transaction.receiverAddress}
+                              />
                             )}
                           </div>
                         </div>
                       </td>
                       <td data-th="Amount">{transaction.amount}</td>
                       <td data-th="Token">
-                        {transaction.token === "BTTC" ||
-                        transaction.token === "SHAKE"
-                          ? transaction.token
-                          : "Unknown"}
+                        {transaction.token === "BTTC"
+                          ? "BTTC"
+                          : transaction.tokenName}
                       </td>
-                      <td data-th="Date">{transaction.date}</td>
+                      <td data-th="Date">{transaction.initiateDate}</td>
                       <td data-th="Status">
                         <div
-                          className={`status status-${transaction.status.toLowerCase()}`}
+                        // className={`status status-${transaction?.status.toLowerCase()}`}
                         >
-                          {transaction.status}
+                          {transaction?.status}
                         </div>
                       </td>
                       <td data-th="Action">
                         <button
                           onClick={() =>
                             router.push(
-                              `/transaction-request/${transaction.id}`
+                              `/transaction-request/${transaction.TransactionId}`
                             )
                           }
                           className="text-indigo-500 hover:text-indigo-800"
