@@ -106,7 +106,7 @@ const TransactionReqActionModal = ({ onClose }) => {
           tokenName: tokenDetails.symbol,
         },
       });
-
+      const currentDate = new Date();
       console.log("Signature:", signature);
       if (signature) {
         const userData = {
@@ -117,6 +117,8 @@ const TransactionReqActionModal = ({ onClose }) => {
           senderSignature: signature,
           receiverSignature: "",
           status: "inititated",
+          tokenName: tokenDetails.symbol,
+          initiateDate: currentDate,
         };
         console.log(userData);
         try {

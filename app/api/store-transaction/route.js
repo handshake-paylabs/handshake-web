@@ -1,11 +1,9 @@
 // pages/api/storeTransaction.js
-
 import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const {
-    TransactionId,
     senderAddress,
     receiverAddress,
     amount,
@@ -13,15 +11,30 @@ export async function POST(req) {
     senderSignature,
     receiverSignature,
     status,
+    tokenName,
+    initiateDate,
+    approveDate,
+    transectionDate,
   } = await req.json();
 
   // Connect to MongoDB
-  console.log("hello world");
   const client = await MongoClient.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
   const db = client.db();
-
   const collection = db.collection("transactions");
+
   try {
+    // Find the document with the highest TransactionId
+    const lastTransaction = await collection.findOne(
+      {},
+      { sort: { TransactionId: -1 } }
+    );
+
+    // Generate a new TransactionId value by incrementing the last one
+    const TransactionId = lastTransaction
+      ? lastTransaction.TransactionId + 1
+      : 1;
+
+    // Insert the new document with the auto-incremented TransactionId
     await collection.insertOne({
       TransactionId,
       senderAddress,
@@ -31,7 +44,12 @@ export async function POST(req) {
       senderSignature,
       receiverSignature,
       status,
+      tokenName,
+      initiateDate,
+      approveDate,
+      transectionDate,
     });
+
     return NextResponse.json(
       { message: "Transaction stored successfully" },
       { status: 201 }
