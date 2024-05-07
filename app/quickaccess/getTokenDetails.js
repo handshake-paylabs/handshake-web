@@ -1,5 +1,5 @@
 import { createPublicClient, http, pubKeyToAddress } from "viem";
-import erc20Abi from "./ERC20Abi.json";
+import erc20Abi from "./ERC20ABI.json";
 import { getContract } from "viem";
 const publicClient = createPublicClient({
   chain: {
