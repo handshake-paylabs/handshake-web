@@ -42,10 +42,9 @@ body {
   margin-bottom: 50px;
   width: max-content;
   border-collapse: collapse;
-  color: #fff;
-  border: 1px solid #2d2d2d;
-  background: #151619;
-  background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03));
+  color: black;
+  background: white;
+  /* background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03)); */
 }
 .modal-content2 input{
   background: transparent;
@@ -65,4 +64,13 @@ body {
 
 .modal-content2 .inputParent label{
   text-align: left;
+}
+
+.approveBtn{
+  width: 100% !important;
+  background-color: #30cb83;
+  color: white;
+  padding: 10px 0;
+  border-radius: 10px;
+  margin-top: 10px;
 }

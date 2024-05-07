@@ -35,42 +35,71 @@ export default function TransactionRequestDetails({ params }) {
   return (
     <>
       <Header />
-      {params?.id}
-      <div className="container">
-        <h1 className="py-4">Transaction Details</h1>
-        <div className="modal-content2">
-          <div className="my-6 flex flex-col item-center justify-center w-full">
-            <div className="w-full inputParent">
-              <label>ID:</label>
-              <input type="text" value={transaction.TransactionId} readOnly />
+      <div className="container-parent">
+        <h1 className="reqheader">Transaction Details</h1>
+        <div className="container">
+          <div className="modal-content2">
+            <div className="my-6 flex flex-col item-center justify-center w-full">
+              <div className="w-full inputParent">
+                <label>ID:</label>
+                <input
+                  type="text"
+                  className="text-black"
+                  value={transaction.TransactionId}
+                  readOnly
+                />
+              </div>
+              <div className="w-full inputParent">
+                <label>Sender:</label>
+                <input
+                  type="text"
+                  className="text-black"
+                  value={transaction.senderAddress}
+                  readOnly
+                />
+              </div>
+              <div className="w-full inputParent">
+                <label>Receiver:</label>
+                <input
+                  type="text"
+                  className="text-black"
+                  value={transaction.receiverAddress}
+                  readOnly
+                />
+              </div>
+              <div className="w-full inputParent">
+                <label>Token:</label>
+                <input
+                  type="text"
+                  className="text-black"
+                  value={transaction.tokenName}
+                  readOnly
+                />
+              </div>
+              <div className="w-full inputParent">
+                <label>Amount:</label>
+                <input
+                  type="text"
+                  className="text-black"
+                  value={transaction.amount}
+                  readOnly
+                />
+              </div>
+              <div className="w-full inputParent">
+                <label>Date:</label>
+                <input
+                  type="text"
+                  className="text-black"
+                  value={transaction.initiateDate}
+                  readOnly
+                />
+              </div>
+              <div className="w-full inputParent">
+                <button className="approveBtn">Approve</button>
+              </div>
             </div>
-            <div className="w-full inputParent">
-              <label>Sender:</label>
-              <input type="text" value={transaction.sender} readOnly />
-            </div>
-            <div className="w-full inputParent">
-              <label>Receiver:</label>
-              <input type="text" value={transaction.receiver} readOnly />
-            </div>
-            <div className="w-full inputParent">
-              <label>Token:</label>
-              <input type="text" value={transaction.token} readOnly />
-            </div>
-            <div className="w-full inputParent">
-              <label>Amount:</label>
-              <input type="text" value={transaction.amount} readOnly />
-            </div>
-            <div className="w-full inputParent">
-              <label>Date:</label>
-              <input type="text" value={transaction.date} readOnly />
-            </div>
-            <div className="w-full inputParent">
-              <button>Approve</button>
-              <button>Reject</button>
-              <button>Send</button>
-            </div>
+            {/* Add more fields as needed */}
           </div>
-          {/* Add more fields as needed */}
         </div>
       </div>
     </>

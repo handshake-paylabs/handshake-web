@@ -54,6 +54,7 @@ import { useAccount, useBalance } from "wagmi";
 const TransactionReqList = () => {
   const { address } = useAccount();
   const [transactions, setTransaction] = useState([]);
+
   useEffect(() => {
     const fetchTransactions = async () => {
       const url =
@@ -62,7 +63,8 @@ const TransactionReqList = () => {
         const response = await fetch(url);
         const data = await response.json();
         console.log(data);
-        setTransaction(data); // Assuming the API returns a single transaction object
+        setTransaction(data);
+        // Assuming the API returns a single transaction object
       } catch (error) {
         console.error("Failed to fetch transactions:", error);
       }
@@ -90,28 +92,22 @@ const TransactionReqList = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-  const fetchSVG = async (value) => {
-    try {
-      // Replace with the desired value
-      const response = await fetch(`/api/gradient?value=${value}`);
-      const svgData = await response.text();
-      return svgData;
-    } catch (error) {
-      console.error("Error fetching SVG:", error);
-    }
-  };
-  const filteredTransactions =
-    activeTab === "all"
-      ? transactions
-      : activeTab === "initiated"
-      ? transactions.filter(
-          (transaction) => transaction.senderAddress === address
-        )
-      : activeTab === "received"
-      ? transactions.filter(
-          (transaction) => transaction.receiverAddress === address
-        )
-      : transactions;
+
+  // const filteredTransactions =
+  //   activeTab === "all"
+  //     ? transactions
+  //       ? transactions
+  //       : null
+  //     : activeTab === "initiated"
+  //     ? transactions.filter(
+  //         (transaction) => transaction.senderAddress === address
+  //       )
+  //     : activeTab === "received"
+  //     ? transactions.filter(
+  //         (transaction) => transaction.receiverAddress === address
+  //       )
+  //     : transactions;
+
   return (
     <>
       <div className="container-parent">
@@ -167,100 +163,94 @@ const TransactionReqList = () => {
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
-                {filteredTransactions.length > 0 ? (
-                  filteredTransactions.map((transaction) => (
-                    <tr key={transaction.TransactionId}>
-                      <td
-                        data-th="Arrow"
-                        className={`${
-                          transaction.senderAddress === address
-                            ? "arrow-outgoing"
-                            : "arrow-incoming"
-                        }`}
-                      ></td>
-                      <td data-th="No.">{transaction.TransactionId}</td>
-                      <td data-th="Sender">
-                        <div className="table-user">
-                          <Blockies
-                            className="table-user-gradient"
-                            seed={
-                              transaction.senderAddress
-                                ? transaction.senderAddress
-                                : null
-                            }
-                            size={8}
-                            scale={3}
-                          />
+                {transactions.length > 0
+                  ? transactions.map((transaction) => (
+                      <tr key={transaction.TransactionId}>
+                        <td
+                          data-th="Arrow"
+                          className={`${
+                            transaction.senderAddress === address
+                              ? "arrow-outgoing"
+                              : "arrow-incoming"
+                          }`}
+                        ></td>
+                        <td data-th="No.">{transaction.TransactionId}</td>
+                        <td data-th="Sender">
+                          <div className="table-user">
+                            <Blockies
+                              className="table-user-gradient"
+                              seed={
+                                transaction.senderAddress
+                                  ? transaction.senderAddress
+                                  : null
+                              }
+                              size={8}
+                              scale={3}
+                            />
 
-                          <div className="table-user-details">
-                            {transaction.senderAddress === address ? (
-                              "You"
-                            ) : (
-                              <AddressWithCopy
-                                address={transaction.senderAddress}
-                              />
-                            )}
+                            <div className="table-user-details">
+                              {transaction.senderAddress === address ? (
+                                "You"
+                              ) : (
+                                <AddressWithCopy
+                                  address={transaction.senderAddress}
+                                />
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td data-th="Receiver">
-                        <div className="table-user">
-                          <Blockies
-                            className="table-user-gradient"
-                            seed={
-                              transaction.receiverAddress
-                                ? transaction.receiverAddress
-                                : null
+                        </td>
+                        <td data-th="Receiver">
+                          <div className="table-user">
+                            <Blockies
+                              className="table-user-gradient"
+                              seed={
+                                transaction.receiverAddress
+                                  ? transaction.receiverAddress
+                                  : null
+                              }
+                              size={8}
+                              scale={3}
+                            />
+                            <div className="table-user-details">
+                              {transaction.receiverAddress === address ? (
+                                "You"
+                              ) : (
+                                <AddressWithCopy
+                                  address={transaction.receiverAddress}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td data-th="Amount">{transaction.amount}</td>
+                        <td data-th="Token">
+                          {transaction.token === "BTTC"
+                            ? "BTTC"
+                            : transaction.tokenName}
+                        </td>
+                        <td data-th="Date">{transaction.initiateDate}</td>
+                        <td data-th="Status">
+                          <div
+                            className={`status status-${transaction?.status.toLowerCase()}`}
+                          >
+                            {transaction?.status}
+                          </div>
+                        </td>
+                        <td data-th="Action">
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/transaction-request/${transaction.TransactionId}`
+                              )
                             }
-                            size={8}
-                            scale={3}
-                          />
-                          <div className="table-user-details">
-                            {transaction.receiverAddress === address ? (
-                              "You"
-                            ) : (
-                              <AddressWithCopy
-                                address={transaction.receiverAddress}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td data-th="Amount">{transaction.amount}</td>
-                      <td data-th="Token">
-                        {transaction.token === "BTTC"
-                          ? "BTTC"
-                          : transaction.tokenName}
-                      </td>
-                      <td data-th="Date">{transaction.initiateDate}</td>
-                      <td data-th="Status">
-                        <div
-                        // className={`status status-${transaction?.status.toLowerCase()}`}
-                        >
-                          {transaction?.status}
-                        </div>
-                      </td>
-                      <td data-th="Action">
-                        <button
-                          onClick={() =>
-                            router.push(
-                              `/transaction-request/${transaction.TransactionId}`
-                            )
-                          }
-                          className="text-indigo-500 hover:text-indigo-800"
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <SkeletonTheme baseColor="#202020" highlightColor="#444">
-                    <p>
-                      <Skeleton count={5} />
-                    </p>
-                  </SkeletonTheme>
-                )}
+                            className="text-indigo-500 hover:text-indigo-800"
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  : null}
               </tbody>
             </table>
           </div>
