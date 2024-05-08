@@ -89,7 +89,7 @@ export default function TransactionRequestDetails({ params }) {
         try {
           console.log("entered into try block");
           let result = await fetch(
-            `${process.env.NEXTAUTH_URL}api/payment-completed`,
+            `https://handshake-chi.vercel.app/api/payment-completed`,
             {
               method: "PUT",
               body: JSON.stringify(userData),
@@ -151,7 +151,7 @@ export default function TransactionRequestDetails({ params }) {
           sender: transaction.senderAddress,
           receiver: transaction.receiverAddress,
           amount: transaction.amount,
-          tokenName: tokenDetails.symbol === "" ? tokenDetails.symbol : "BTTC",
+          tokenName: transaction.tokenName,
         },
       });
       const currentDate = new Date();
@@ -167,7 +167,7 @@ export default function TransactionRequestDetails({ params }) {
         try {
           console.log("entered into try block");
           let result = await fetch(
-            `${process.env.NEXTAUTH_URL}api/store-transaction`,
+            `https://handshake-chi.vercel.app/api/store-transaction`,
             {
               method: "PUT",
               body: JSON.stringify(userData),

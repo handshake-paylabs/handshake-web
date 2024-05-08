@@ -18,10 +18,10 @@ const TransactionReqActionModal = ({ onClose }) => {
   });
   const [isERC20, setIsERC20] = useState(false);
   const defaultTokenDetails = {
-    name: null,
-    symbol: null,
-    decimals: null,
-    balance: null,
+    name: "",
+    symbol: "",
+    decimals: "",
+    balance: "",
   };
 
   const [tokenDetails, setTokenDetails] = useState(defaultTokenDetails);
