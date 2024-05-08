@@ -7,58 +7,19 @@ import AddressWithCopy from "./AddressWithCopy";
 import { useRouter } from "next/navigation";
 import Blockies from "react-blockies";
 import { useAccount, useBalance } from "wagmi";
-// Sample data
-// export const transactions = [
-//   {
-//     id: 1,
-//     senderAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
-//     receiverAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
-//     amount: "100",
-//     token: "BTTC",
-//     date: "2024-05-07",
-//     status: "Approved",
-//     type: "initiated",
-//   },
-//   {
-//     id: 2,
-//     senderAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
-//     receiverAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
-//     amount: "10000",
-//     token: "BTTC",
-//     date: "2024-05-06",
-//     status: "Pending",
-//     type: "received",
-//   },
-//   {
-//     id: 3,
-//     senderAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
-//     receiverAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
-//     amount: "5000",
-//     token: "SHAKE",
-//     date: "2024-05-05",
-//     status: "Completed",
-//     type: "initiated",
-//   },
-//   {
-//     id: 4,
-//     senderAddress: "0x5A6b7C8d9E0F1234567890123456789012345678",
-//     receiverAddress: "0x0A1b2C3d4E5F678901234567890123456789012",
-//     amount: "1000",
-//     token: "SHAKE",
-//     date: "2024-05-04",
-//     status: "Rejected",
-//     type: "received",
-//   },
-// ];
 
 const TransactionReqList = () => {
   const { address } = useAccount();
   const [transactions, setTransaction] = useState([]);
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("all");
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (address) {
       const fetchTransactions = async () => {
-        const url = `/api/fetch-transaction?address=${address}&type=all`;
+        const url = `/api/fetch-transaction?address=${address}&type=${activeTab}`;
         try {
           const response = await fetch(url);
           const data = await response.json();
@@ -69,18 +30,13 @@ const TransactionReqList = () => {
           console.error("Failed to fetch transactions:", error);
         }
       };
+      fetchTransactions();
     }
-
-    fetchTransactions();
-  }, [address]);
+  }, [address, activeTab]);
   const balance = useBalance({
     address: address ? address : "",
   });
 
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState("all");
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   // const address = "0x5A6b7C8d9E0F1234567890123456789012345678";
   const openModal = (transaction) => {
     setSelectedTransaction(transaction);
@@ -224,11 +180,7 @@ const TransactionReqList = () => {
                           </div>
                         </td>
                         <td data-th="Amount">{transaction.amount}</td>
-                        <td data-th="Token">
-                          {transaction.token === "BTTC"
-                            ? "BTTC"
-                            : transaction.tokenName}
-                        </td>
+                        <td data-th="Token">{transaction.tokenName}</td>
                         <td data-th="Date">{transaction.initiateDate}</td>
                         <td data-th="Status">
                           <div
@@ -241,12 +193,12 @@ const TransactionReqList = () => {
                           <button
                             onClick={() =>
                               router.push(
-                                `/transaction-request/${transaction.TransactionId}`
+                                `/transaction-request/${activeTab}/${transaction.TransactionId}`
                               )
                             }
                             className="text-indigo-500 hover:text-indigo-800"
                           >
-                            View
+                            Open
                           </button>
                         </td>
                       </tr>

@@ -13,9 +13,9 @@ export async function GET(req) {
 
   try {
     const query = {};
-    if (type === "sender") {
+    if (type === "initiated") {
       query.senderAddress = address;
-    } else if (type === "receiver") {
+    } else if (type === "received") {
       query.receiverAddress = address;
     } else if (type === "all") {
       query.$or = [{ senderAddress: address }, { receiverAddress: address }];

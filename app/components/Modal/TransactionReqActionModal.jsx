@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Modal.css";
 import { getTokenDetails } from "@/app/quickaccess/getTokenDetails";
 import { useAccount } from "wagmi";
@@ -23,6 +23,7 @@ const TransactionReqActionModal = ({ onClose }) => {
     decimals: null,
     balance: null,
   };
+
   const [tokenDetails, setTokenDetails] = useState(defaultTokenDetails);
 
   // Handle onchange event for input fields and update the transaction state
@@ -40,29 +41,29 @@ const TransactionReqActionModal = ({ onClose }) => {
     }
   };
 
+  useEffect(() => {
+    if (!isERC20) {
+      setTokenDetails(defaultTokenDetails);
+      setTransaction({ ...transaction, ["token"]: "" });
+    }
+  }, [isERC20]);
+
   const handleCheckboxChange = () => {
     setIsERC20(!isERC20);
   };
 
   const signTransaction = async () => {
-    // if (recipient === "" || amount === "") {
-    //   console.log("Please Enter Details");
-    //   return;
-    // }
-    // if (!isValidAddress(recipient)) {
-    //   console.log("invalid Ethereum Address");
-    //   return;
-    // }
-    // if (!isValidValue(amount)) {
-    //   console.log("Invalid Amount");
-    //   return;
-    // }
-    // const { ethereum } = window;
-    // if (!ethereum) {
-    //   throw new Error("Metamask is not installed, please install!");
-    // }
+    if (transaction.receiver === "" || transaction.amount === "") {
+      console.log("Please Enter Details");
+      return;
+    }
+
+    const { ethereum } = window;
+    if (!ethereum) {
+      throw new Error("Metamask is not installed, please install!");
+    }
     // let amount = parseUnits(transaction.amount, tokenDetails.decimals);
-    // console.log(amount);
+    console.log(transaction.amount);
 
     try {
       const client = createWalletClient({
@@ -76,13 +77,20 @@ const TransactionReqActionModal = ({ onClose }) => {
         transport: custom(window.ethereum),
       });
 
+      const url = `/api/latest-id/`;
+
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log(data);
+      let transactionId = parseInt(data.TransactionId) + 1;
+      console.log(transactionId);
       const signature = await client.signTypedData({
         account: address,
         domain: {
           name: "HandshakeTokenTransfer",
           version: "1",
           chainId: "1029",
-          verifyingContract: "0xf6f9791c7eE8CbE0eD5876B653e6F195798eA9d2",
+          verifyingContract: "0x0856Ab13d8BFC644c1096554Bd23779dc42e4cDE",
         },
         types: {
           EIP712Domain: [
@@ -92,6 +100,7 @@ const TransactionReqActionModal = ({ onClose }) => {
             { name: "verifyingContract", type: "address" },
           ],
           initiateTransaction: [
+            { name: "id", type: "uint256" },
             { name: "sender", type: "address" },
             { name: "receiver", type: "address" },
             { name: "amount", type: "uint256" },
@@ -100,10 +109,11 @@ const TransactionReqActionModal = ({ onClose }) => {
         },
         primaryType: "initiateTransaction",
         message: {
+          id: transactionId,
           sender: address,
           receiver: transaction.receiver,
-          amount: 1,
-          tokenName: tokenDetails.symbol,
+          amount: transaction.amount,
+          tokenName: tokenDetails.symbol !== "" ? tokenDetails.symbol : "BTTC",
         },
       });
       const currentDate = new Date();
@@ -112,12 +122,12 @@ const TransactionReqActionModal = ({ onClose }) => {
         const userData = {
           senderAddress: address,
           receiverAddress: transaction.receiver,
-          amount: 1,
+          amount: transaction.amount,
           tokenAddress: transaction.token,
           senderSignature: signature,
           receiverSignature: "",
           status: "inititated",
-          tokenName: tokenDetails.symbol,
+          tokenName: tokenDetails.symbol !== "" ? tokenDetails.symbol : "BTTC",
           initiateDate: currentDate,
         };
         console.log(userData);
@@ -131,12 +141,12 @@ const TransactionReqActionModal = ({ onClose }) => {
           // console.log(response.message);
         } catch (error) {
           console.error("Error signing transaction:", error);
-          throw error;
+          // throw error;
         }
       }
     } catch (error) {
       console.error("Error signing transaction:", error);
-      throw error;
+      // throw error;
     }
   };
   return (
