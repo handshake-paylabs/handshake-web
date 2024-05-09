@@ -77,7 +77,7 @@ const TransactionReqActionModal = ({ onClose }) => {
         transport: custom(window.ethereum),
       });
 
-      const url = `/api/latest-id/`;
+      const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/latest-id/`;
 
       const response = await fetch(url);
       const data = await response.json();
