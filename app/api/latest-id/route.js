@@ -1,4 +1,5 @@
 // pages/api/queryTransactions.js
+"use client";
 import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
 

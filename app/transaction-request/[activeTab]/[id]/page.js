@@ -89,7 +89,7 @@ export default function TransactionRequestDetails({ params }) {
         try {
           console.log("entered into try block");
           let result = await fetch(
-            `https://handshake-chi.vercel.app/api/payment-completed`,
+            `${process.env.NEXT_PUBLIC_APP_URL}api/payment-completed`,
             {
               method: "PUT",
               body: JSON.stringify(userData),
@@ -167,7 +167,7 @@ export default function TransactionRequestDetails({ params }) {
         try {
           console.log("entered into try block");
           let result = await fetch(
-            `https://handshake-chi.vercel.app/api/store-transaction`,
+            `${process.env.NEXT_PUBLIC_APP_URL}api/store-transaction`,
             {
               method: "PUT",
               body: JSON.stringify(userData),
