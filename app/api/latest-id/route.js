@@ -1,4 +1,3 @@
-"use server";
 import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
 export const revalidate = 0;
