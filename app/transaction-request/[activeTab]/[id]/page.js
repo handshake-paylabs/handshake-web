@@ -8,6 +8,8 @@ import handshakeABI from "./Handshake.json";
 import { createWalletClient, custom } from "viem";
 import { approveToken } from "@/app/quickaccess/ApproveTokens";
 import { parseUnits, parseEther } from "viem";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const publicClient = createPublicClient({
   chain: {
@@ -35,8 +37,10 @@ export default function TransactionRequestDetails({ params }) {
   const [buttonName, setbuttonName] = useState("");
   let activeTab = params?.activeTab ? params.activeTab : "all";
   console.log(activeTab);
+  const [isLoading, setIsLoading] = useState(false);
 
   const executeTransaction = async () => {
+    setIsLoading(true);
     try {
       const TransactionDetails = [
         transaction.TransactionId,
@@ -104,13 +108,18 @@ export default function TransactionRequestDetails({ params }) {
           console.error("Error signing transaction:", error);
           // throw error;
         }
+        toast.success("Execution sucessfull");
       }
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
+      toast.error("Execution faile");
       console.log(error);
     }
   };
   const signTransaction = async () => {
     try {
+      setIsLoading(true);
       const client = createWalletClient({
         chain: {
           id: 1029, // BTTC Donau testnet chain ID
@@ -178,9 +187,12 @@ export default function TransactionRequestDetails({ params }) {
           );
           const response = await result.json();
           // console.log(response.message);
+          setIsLoading(false);
+          toast.success("Signed Sucessfully");
         } catch (error) {
           console.error("Error signing transaction:", error);
-          // throw error;
+          setIsLoading(false);
+          toast.error("Error while signing");
         }
       }
     } catch (error) {
@@ -298,7 +310,9 @@ export default function TransactionRequestDetails({ params }) {
                 />
               </div>
               <div className="w-full inputParent">
-                {buttonName === "Sign Transaction" ? (
+                {isLoading ? (
+                  "Loading..."
+                ) : buttonName === "Sign Transaction" ? (
                   <button
                     className="approveBtn"
                     onClick={() => signTransaction()}
@@ -316,6 +330,7 @@ export default function TransactionRequestDetails({ params }) {
               </div>
             </div>
             {/* Add more fields as needed */}
+            <ToastContainer />
           </div>
         </div>
       </div>

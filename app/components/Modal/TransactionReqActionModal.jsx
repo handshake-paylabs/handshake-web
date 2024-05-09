@@ -6,9 +6,12 @@ import { getTokenDetails } from "@/app/quickaccess/getTokenDetails";
 import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
 import { createWalletClient, custom } from "viem";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TransactionReqActionModal = ({ onClose }) => {
   const { address, isConnected } = useAccount();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [transaction, setTransaction] = useState({
     sender: "",
@@ -57,7 +60,7 @@ const TransactionReqActionModal = ({ onClose }) => {
       console.log("Please Enter Details");
       return;
     }
-
+    setIsLoading(true);
     const { ethereum } = window;
     if (!ethereum) {
       throw new Error("Metamask is not installed, please install!");
@@ -138,8 +141,12 @@ const TransactionReqActionModal = ({ onClose }) => {
             body: JSON.stringify(userData),
           });
           const response = await result.json();
+          toast.success("Signed Sucessfully");
+          setIsLoading(false);
           // console.log(response.message);
         } catch (error) {
+          toast.error("Error while signing");
+          setIsLoading(false);
           console.error("Error signing transaction:", error);
           // throw error;
         }
@@ -255,11 +262,16 @@ const TransactionReqActionModal = ({ onClose }) => {
                 onChange={handleInputChange}
               />
             </div>
+            <ToastContainer />
 
             <div className="w-full inputParent">
-              <button className="sendReqBtn" onClick={signTransaction}>
-                Send
-              </button>
+              {isLoading ? (
+                "Loading..."
+              ) : (
+                <button className="sendReqBtn" onClick={signTransaction}>
+                  Send
+                </button>
+              )}
             </div>
           </div>
         </div>
