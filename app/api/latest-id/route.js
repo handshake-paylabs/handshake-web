@@ -1,6 +1,7 @@
 "use server";
 import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
+export const revalidate = 0;
 
 export async function GET(req) {
   const client = await MongoClient.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
