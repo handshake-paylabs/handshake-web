@@ -15,9 +15,12 @@ export async function POST(req) {
     initiateDate,
     approveDate,
     transectionDate,
+    decimals,
+    nonce,
   } = await req.json();
 
   // Connect to MongoDB
+
   const client = await MongoClient.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
   const db = client.db();
   const collection = db.collection("transactions");
@@ -48,6 +51,8 @@ export async function POST(req) {
       initiateDate,
       approveDate,
       transectionDate,
+      decimals,
+      nonce,
     });
 
     return NextResponse.json(

@@ -35,8 +35,8 @@ const walletClient = createWalletClient({
 export default function TransactionRequestDetails({ params }) {
   const [transaction, setTransaction] = useState();
   const { address, isConnected } = useAccount();
-  const [buttonName, setbuttonName] = useState("");
-  let activeTab = params?.activeTab ? params.activeTab : "queue";
+
+  const [buttonActive, setButtonActive] = useState(true);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,7 +45,7 @@ export default function TransactionRequestDetails({ params }) {
     console.log(transaction.amount);
     try {
       const TransactionDetails = [
-        transaction.TransactionId,
+        transaction.nonce,
         transaction.senderAddress,
         transaction.receiverAddress,
         transaction.amount,
@@ -54,6 +54,8 @@ export default function TransactionRequestDetails({ params }) {
           : "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
         transaction.tokenName,
       ];
+
+      console.log(TransactionDetails);
 
       let functionCalled = "";
       if (transaction.tokenAddress === "") {
@@ -121,89 +123,6 @@ export default function TransactionRequestDetails({ params }) {
       console.log(error);
     }
   };
-  const signTransaction = async () => {
-    try {
-      setIsLoading(true);
-      const client = createWalletClient({
-        chain: {
-          id: 1029, // BTTC Donau testnet chain ID
-          rpcUrls: {
-            public: "https://pre-rpc.bittorrentchain.io/",
-            websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
-          },
-        },
-        transport: custom(window.ethereum),
-      });
-
-      const amount = parseUnits(transaction.amount, transaction.decimlals);
-      const signature = await client.signTypedData({
-        account: address,
-        domain: {
-          name: "HandshakeTokenTransfer",
-          version: "1",
-          chainId: "1029",
-          verifyingContract: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
-        },
-        types: {
-          EIP712Domain: [
-            { name: "name", type: "string" },
-            { name: "version", type: "string" },
-            { name: "chainId", type: "uint256" },
-            { name: "verifyingContract", type: "address" },
-          ],
-          signByReceiver: [
-            { name: "id", type: "uint256" },
-            { name: "sender", type: "address" },
-            { name: "receiver", type: "address" },
-            { name: "amount", type: "uint256" },
-            { name: "tokenName", type: "string" },
-          ],
-        },
-        primaryType: "signByReceiver",
-        message: {
-          id: transaction.TransactionId,
-          sender: transaction.senderAddress,
-          receiver: transaction.receiverAddress,
-          amount: amount,
-          tokenName: transaction.tokenName,
-        },
-      });
-      const currentDate = new Date();
-      console.log("Signature:", signature);
-      if (signature) {
-        const userData = {
-          TransactionId: transaction.TransactionId, // This should be passed in the request to identify the transaction to update
-          receiverSignature: signature,
-          status: "approved",
-          approveDate: currentDate,
-        };
-        console.log(userData);
-        try {
-          console.log("entered into try block");
-          let result = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL}api/store-transaction`,
-            {
-              method: "PUT",
-              body: JSON.stringify(userData),
-              headers: {
-                "Content-Type": "application/json", // This header is crucial for sending JSON data
-              },
-            }
-          );
-          const response = await result.json();
-          // console.log(response.message);
-          setIsLoading(false);
-          toast.success("Signed Sucessfully");
-        } catch (error) {
-          console.error("Error signing transaction:", error);
-          setIsLoading(false);
-          toast.error("Error while signing");
-        }
-      }
-    } catch (error) {
-      console.error("Error signing transaction:", error);
-    }
-  };
 
   const cancelTransaction = async () => {
     const currentDate = new Date();
@@ -240,7 +159,7 @@ export default function TransactionRequestDetails({ params }) {
   useEffect(() => {
     if (address) {
       const fetchTransactions = async () => {
-        const url = `/api/fetch-transaction?address=${address}&type=${activeTab}`;
+        const url = `/api/fetch-transaction?address=${address}&type=received`;
         try {
           const response = await fetch(url);
           const data = await response.json();
@@ -252,21 +171,14 @@ export default function TransactionRequestDetails({ params }) {
             const transactions = data.find(
               (transaction) => transaction.TransactionId == id
             );
-            console.log(transactions, activeTab);
+
             if (
-              transactions.status === "approved" &&
-              transactions.receiverSignature !== "" &&
-              transactions.senderSignature !== "" &&
-              activeTab === "queue"
-            ) {
-              setbuttonName("Execute Transaction");
-            } else if (
               transactions.status === "inititated" &&
-              transactions.senderSignature !== "" &&
               transactions.receiverSignature === "" &&
-              activeTab === "received"
+              transactions.senderSignature !== ""
             ) {
-              setbuttonName("Sign Transaction");
+              console.log("active");
+              setButtonActive(false);
             }
 
             setTransaction(transactions);
@@ -292,11 +204,11 @@ export default function TransactionRequestDetails({ params }) {
           <div className="modal-content2">
             <div className="my-6 flex flex-col item-center justify-center w-full">
               <div className="w-full inputParent">
-                <label>ID:</label>
+                <label>Nonce:</label>
                 <input
                   type="text"
                   className="text-black"
-                  value={transaction?.TransactionId}
+                  value={transaction?.nonce}
                   readOnly
                 />
               </div>
@@ -353,35 +265,31 @@ export default function TransactionRequestDetails({ params }) {
               <div className="w-full inputParent">
                 {isLoading ? (
                   "Loading..."
-                ) : buttonName === "Sign Transaction" ? (
-                  <button
-                    className="approveBtn"
-                    onClick={() => signTransaction()}
-                  >
-                    {buttonName}
-                  </button>
-                ) : buttonName === "Execute Transaction" ? (
-                  <button
-                    className="approveBtn"
-                    onClick={() => executeTransaction()}
-                  >
-                    {buttonName}
-                  </button>
-                ) : null}
-              </div>
-              <div>
-                {" "}
-                {activeTab !== "history" ? (
-                  <button
-                    className="approveBtn"
-                    onClick={() => cancelTransaction()}
-                  >
-                    Cancel
-                  </button>
-                ) : null}
+                ) : (
+                  <div>
+                    <button
+                      className="approveBtn"
+                      onClick={() => executeTransaction()}
+                      disabled={!buttonActive}
+                    >
+                      {buttonActive ? (
+                        "Execute"
+                      ) : (
+                        <span>Waiting for receiver to sign...</span>
+                      )}
+                    </button>
+
+                    <button
+                      className="approveBtn cancelBtn"
+                      onClick={() => cancelTransaction()}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
-            {/* Add more fields as needed */}
+
             <ToastContainer />
           </div>
         </div>

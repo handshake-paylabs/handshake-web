@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import "./Modal.css";
+import "./InitiateTransaction.css";
 import { getTokenDetails } from "@/app/quickaccess/getTokenDetails";
 import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
 import { createWalletClient, custom } from "viem";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { parseUnits, parseEther } from "viem";
 
-const TransactionReqActionModal = ({ onClose }) => {
+const InitiateTransaction = ({ onClose }) => {
   const { address, isConnected } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,6 +40,7 @@ const TransactionReqActionModal = ({ onClose }) => {
     console.log(transaction.token, address);
     console.log(await getTokenDetails(transaction.token));
     const getToken = await getTokenDetails(transaction.token);
+    console.log(getToken);
     if (getToken !== null) {
       setTokenDetails(getToken);
     }
@@ -80,20 +82,26 @@ const TransactionReqActionModal = ({ onClose }) => {
         transport: custom(window.ethereum),
       });
 
-      const url = `/api/latest-id/`;
+      const url = `/api/latest-nonce?address=${address}`;
 
       const response = await fetch(url);
       const data = await response.json();
       console.log(data);
-      let transactionId = parseInt(data.TransactionId) + 1;
-      console.log(transactionId);
+      let nonce = parseInt(data.nonce) + 1;
+      var amount = transaction.amount;
+      if (isERC20) {
+        amount = parseUnits(transaction.amount, tokenDetails.decimals);
+      } else {
+        amount = parseEther(transaction.amount);
+      }
+
       const signature = await client.signTypedData({
         account: address,
         domain: {
           name: "HandshakeTokenTransfer",
           version: "1",
           chainId: "1029",
-          verifyingContract: "0x0856Ab13d8BFC644c1096554Bd23779dc42e4cDE",
+          verifyingContract: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
         },
         types: {
           EIP712Domain: [
@@ -103,7 +111,7 @@ const TransactionReqActionModal = ({ onClose }) => {
             { name: "verifyingContract", type: "address" },
           ],
           initiateTransaction: [
-            { name: "id", type: "uint256" },
+            { name: "nonce", type: "uint256" },
             { name: "sender", type: "address" },
             { name: "receiver", type: "address" },
             { name: "amount", type: "uint256" },
@@ -112,10 +120,10 @@ const TransactionReqActionModal = ({ onClose }) => {
         },
         primaryType: "initiateTransaction",
         message: {
-          id: transactionId,
+          nonce: nonce,
           sender: address,
           receiver: transaction.receiver,
-          amount: transaction.amount,
+          amount: amount,
           tokenName: tokenDetails.symbol !== "" ? tokenDetails.symbol : "BTTC",
         },
       });
@@ -125,13 +133,15 @@ const TransactionReqActionModal = ({ onClose }) => {
         const userData = {
           senderAddress: address,
           receiverAddress: transaction.receiver,
-          amount: transaction.amount,
+          amount: amount.toString(),
           tokenAddress: transaction.token,
           senderSignature: signature,
           receiverSignature: "",
           status: "inititated",
           tokenName: tokenDetails.symbol !== "" ? tokenDetails.symbol : "BTTC",
           initiateDate: currentDate,
+          decimals: tokenDetails.symbol !== "" ? tokenDetails.decimals : 18,
+          nonce: nonce,
         };
         console.log(userData);
         try {
@@ -280,4 +290,4 @@ const TransactionReqActionModal = ({ onClose }) => {
   );
 };
 
-export default TransactionReqActionModal;
+export default InitiateTransaction;

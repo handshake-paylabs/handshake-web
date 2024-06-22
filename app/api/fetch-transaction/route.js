@@ -13,12 +13,15 @@ export async function GET(req) {
 
   try {
     const query = {};
-    if (type === "initiated") {
+    if (type === "queue") {
       query.senderAddress = address;
+      query.$or = [{ status: "inititated" }, { status: "approved" }];
     } else if (type === "received") {
       query.receiverAddress = address;
-    } else if (type === "all") {
+      query.$or = [{ status: "inititated" }, { status: "approved" }];
+    } else if (type === "history") {
       query.$or = [{ senderAddress: address }, { receiverAddress: address }];
+      query.$or = [{ status: "completed" }, { status: "rejected" }];
     } else {
       return NextResponse.json(
         { message: "Invalid type. Must be 'sender', 'receiver', or 'all'" },

@@ -11,21 +11,25 @@ contract HandshakeTokenTransfer is EIP712 {
 
     bytes32 private INITIATE_TYPEHASH =
         keccak256(
-            "initiateTransaction(uint256 id,address sender,address receiver,uint256 amount,string tokenName)"
+            "initiateTransaction(uint256 nonce,address sender,address receiver,uint256 amount,string tokenName)"
         );
     bytes32 private PERMIT_TYPEHASH =
         keccak256(
-            "signByReceiver(uint256 id,address sender,address receiver,uint256 amount,string tokenName)"
+            "signByReceiver(uint256 nonce,address sender,address receiver,uint256 amount,string tokenName)"
         );
 
     struct Transaction {
-        uint256 id;
+        uint256 nonce;
         address sender;
         address receiver;
         uint256 amount;
         address tokenAddress;
         string tokenName;
+        
     }
+
+     mapping(address => mapping(uint256 => bool)) public nonces;
+
 
     constructor() EIP712("HandshakeTokenTransfer", "1") {}
 
@@ -39,11 +43,12 @@ contract HandshakeTokenTransfer is EIP712 {
         bytes32 structHash = keccak256(
             abi.encode(
                 INITIATE_TYPEHASH,
-                _transaction.id,
+                _transaction.nonce,
                 _transaction.sender,
                 _transaction.receiver,
                 _transaction.amount,
                 keccak256(bytes(_transaction.tokenName))
+                
             )
         );
 
@@ -66,7 +71,7 @@ contract HandshakeTokenTransfer is EIP712 {
         bytes32 structHash = keccak256(
             abi.encode(
                 PERMIT_TYPEHASH,
-                _transaction.id,
+                _transaction.nonce,
                 _transaction.sender,
                 _transaction.receiver,
                 _transaction.amount,
@@ -91,6 +96,7 @@ contract HandshakeTokenTransfer is EIP712 {
             "Invalid receiver address"
         );
         require(_transaction.sender != address(0), "Invalid sender address");
+        require( nonces[_transaction.sender][_transaction.nonce]==false,"Nonce already used");
 
         address sender = initiateTransaction(senderSign, _transaction);
         address receiver = signByReceiver(receiverSign, _transaction);
@@ -100,6 +106,10 @@ contract HandshakeTokenTransfer is EIP712 {
             receiver == _transaction.receiver,
             "Invalid signature of receiver"
         );
+        
+        // Increment nonce after successful transaction execution
+        nonces[_transaction.sender][_transaction.nonce]=true;
+
         payable(_transaction.receiver).transfer(msg.value);
     }
 
@@ -114,6 +124,7 @@ contract HandshakeTokenTransfer is EIP712 {
             "Invalid receiver address"
         );
         require(_transaction.sender != address(0), "Invalid sender address");
+        require( nonces[_transaction.sender][_transaction.nonce]==false,"Nonce already used");
 
         address sender = initiateTransaction(senderSign, _transaction);
         address receiver = signByReceiver(receiverSign, _transaction);
@@ -123,6 +134,9 @@ contract HandshakeTokenTransfer is EIP712 {
             receiver == _transaction.receiver,
             "Invalid signature of receiver"
         );
+
+        // Increment nonce after successful transaction execution
+       nonces[_transaction.sender][_transaction.nonce]=true;
 
         IERC20 token = IERC20(_transaction.tokenAddress);
         require(
@@ -159,6 +173,10 @@ contract HandshakeTokenTransfer is EIP712 {
             receiver == _transaction.receiver,
             "Invalid signature of receiver"
         );
+
+        // Increment nonce after successful transaction execution
+        require( nonces[_transaction.sender][_transaction.nonce]==false,"Nonce already used");
+
         IERC20Permit _token = IERC20Permit(_transaction.tokenAddress);
         IERC20 token = IERC20(_transaction.tokenAddress);
         _token.permit(
@@ -178,5 +196,8 @@ contract HandshakeTokenTransfer is EIP712 {
             ),
             "Token transfer failed"
         );
+        nonces[_transaction.sender][_transaction.nonce]=true;
     }
+
+   
 }
