@@ -9,11 +9,16 @@ import { createWalletClient, custom } from "viem";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { parseUnits, parseEther } from "viem";
+import { formSchemaLoadToken, formSchemaTransaction } from "./schema";
+import LoadingSpinner from "./LoadingSpinner";
 
 const InitiateTransaction = ({ onClose }) => {
   const { address, isConnected } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isLoadingToken, setisLoadingToken] = useState(false);
+  const [errorDisplay, setErrorDisplay] = useState(false);
+  const [errors, setErrors] = useState();
+  const [errorLoadToken, setErrorLoadToken] = useState();
   const [transaction, setTransaction] = useState({
     sender: "",
     receiver: "",
@@ -37,12 +42,27 @@ const InitiateTransaction = ({ onClose }) => {
   };
 
   const loadTokenDetails = async () => {
-    console.log(transaction.token, address);
-    console.log(await getTokenDetails(transaction.token));
-    const getToken = await getTokenDetails(transaction.token);
-    console.log(getToken);
-    if (getToken !== null) {
-      setTokenDetails(getToken);
+    setErrorDisplay(false);
+    const formData = {
+      token: transaction.token,
+    };
+
+    try {
+      formSchemaLoadToken.parse(formData);
+      setisLoadingToken(true);
+      console.log(transaction.token, address);
+      console.log(await getTokenDetails(transaction.token));
+      const getToken = await getTokenDetails(transaction.token);
+      console.log(getToken);
+      if (getToken !== null) {
+        setTokenDetails(getToken);
+      }
+    } catch (err) {
+      console.log(err);
+      setErrorLoadToken(err.formErrors?.fieldErrors?.token);
+      setErrorDisplay(true);
+    } finally {
+      setisLoadingToken(false);
     }
   };
 
@@ -57,12 +77,21 @@ const InitiateTransaction = ({ onClose }) => {
     setIsERC20(!isERC20);
   };
 
-  const signTransaction = async () => {
-    if (transaction.receiver === "" || transaction.amount === "") {
-      console.log("Please Enter Details");
-      return;
-    }
-    setIsLoading(true);
+  const signTransaction = async (e) => {
+    e.preventDefault();
+    // if (transaction.receiver === "" || transaction.amount === "") {
+    //   console.log("Please Enter Details");
+    //   return;
+    // }
+
+    setErrorDisplay(false);
+
+    const formData = {
+      receiver: transaction.receiver,
+      amount: transaction.amount,
+      token: isERC20 ? transaction.token : undefined,
+    };
+
     const { ethereum } = window;
     if (!ethereum) {
       throw new Error("Metamask is not installed, please install!");
@@ -71,6 +100,8 @@ const InitiateTransaction = ({ onClose }) => {
     console.log(transaction.amount);
 
     try {
+      formSchemaTransaction.parse(formData);
+      setIsLoading(true);
       const client = createWalletClient({
         chain: {
           id: 1029, // BTTC Donau testnet chain ID
@@ -153,6 +184,7 @@ const InitiateTransaction = ({ onClose }) => {
           const response = await result.json();
           toast.success("Signed Sucessfully");
           setIsLoading(false);
+          onClose();
           // console.log(response.message);
         } catch (error) {
           toast.error("Error while signing");
@@ -161,16 +193,35 @@ const InitiateTransaction = ({ onClose }) => {
           // throw error;
         }
       }
-    } catch (error) {
-      console.error("Error signing transaction:", error);
+    } catch (err) {
+      console.log(err.formErrors ? err.formErrors : err);
+      setErrors(err.formErrors?.fieldErrors);
+      setErrorDisplay(true);
+      console.error("Error signing transaction:", err);
+
       // throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (transaction.receiver || transaction.token || transaction.amount) {
+      setErrors({});
+      setErrorDisplay(false);
+    }
+
+    return () => {
+      setErrors({});
+      setErrorDisplay(false);
+    };
+  }, [transaction.receiver, transaction.token, transaction.amount]);
+
   return (
     <div className="popup-overlay">
       <div className="popup-container">
         <div className="popup-card">
-          <div className="flex justify-end cursor-pointer">
+          <div className="closeIcon">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -183,19 +234,31 @@ const InitiateTransaction = ({ onClose }) => {
               <path d="M18.3 5.71c-.39-.39-1.02-.39-1.41 0L12 10.59 7.11 5.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41L10.59 12 5.7 16.89c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 13.41l4.89 4.89c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z" />
             </svg>
           </div>
-          <h1 className="text-left">Send Transaction</h1>
+          <h1 className="send-transaction">Send Transaction</h1>
 
-          <div className="my-6 flex flex-col item-center justify-center w-full">
+          <form
+            className="mt-6 flex flex-col item-center justify-center w-full px-4"
+            onSubmit={signTransaction}
+          >
             <div className="w-full inputParent">
               <label>Receiver Address</label>
               <input
                 type="text"
                 name="receiver"
-                placeholder="Receiver's Address"
+                placeholder="Enter Receiver's Address"
                 className="text-black"
                 value={transaction.receiver || ""}
                 onChange={handleInputChange}
+                style={{
+                  border:
+                    errorDisplay && errors?.receiver ? "1px solid red" : "",
+                }}
               />
+              {errorDisplay && errors?.receiver && (
+                <span className="text-red text-left mt-2 text-sm">
+                  *{errors.receiver}
+                </span>
+              )}
             </div>
 
             <div className="w-full inputParent">
@@ -222,18 +285,40 @@ const InitiateTransaction = ({ onClose }) => {
                   <input
                     type="text"
                     name="token"
-                    placeholder="Token Address"
+                    placeholder="Enter Token Address"
                     className="text-black"
                     value={transaction.token || ""}
                     onChange={handleInputChange}
+                    style={{
+                      border:
+                        errorDisplay && errorLoadToken ? "1px solid red" : "",
+                    }}
                   />
+                  {errorDisplay && errorLoadToken && (
+                    <span className="text-red text-left mt-2 text-sm">
+                      *{errorLoadToken}
+                    </span>
+                  )}
                 </div>
-                <button onClick={loadTokenDetails} className="load-token">
-                  Load Token
-                </button>
+                {isLoadingToken ? (
+                  <>
+                    <button className="load-token">
+                      <LoadingSpinner />
+                      Loading...
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={loadTokenDetails}
+                    className="load-token"
+                    type="button"
+                  >
+                    Load Token
+                  </button>
+                )}
               </>
             )}
-            {tokenDetails.name && (
+            {transaction.token && tokenDetails.name && (
               <div className="token-details text-left flex flex-col px-4">
                 <span className="text-slate-600 text-base my-4 ">
                   Name:{" "}
@@ -270,20 +355,30 @@ const InitiateTransaction = ({ onClose }) => {
                 className="text-black"
                 value={transaction.amount || ""}
                 onChange={handleInputChange}
+                style={{
+                  border: errorDisplay && errors?.amount ? "1px solid red" : "",
+                }}
               />
+              {errorDisplay && errors?.amount && (
+                <span className="text-red text-left mt-2 text-sm">
+                  *{errors.amount}
+                </span>
+              )}
             </div>
             <ToastContainer />
 
             <div className="w-full inputParent">
               {isLoading ? (
-                "Loading..."
+                <button className="sendReqBtn disabled">
+                  <LoadingSpinner /> Loading...
+                </button>
               ) : (
-                <button className="sendReqBtn" onClick={signTransaction}>
+                <button className="sendReqBtn" type="submit">
                   Send
                 </button>
               )}
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

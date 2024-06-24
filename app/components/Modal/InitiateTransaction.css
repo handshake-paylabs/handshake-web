@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(16px);
   display: flex;
@@ -13,23 +13,29 @@
 }
 
 .popup-container {
-  transform: translate(50%, 50%);
-  border: 1px solid rgb(45, 45, 45);
+  /* border: 1px solid rgb(45, 45, 45); */
   background-color: rgba(1255, 255, 255, 1);
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  width: 50em;
+  width: 40em;
+  margin: 30px 0;
+  /* height: fit-content; */
   opacity: 1;
-  transform: scale(0.8);
   transition: all 0.3s ease-in-out;
 }
 
 .popup-card {
-  padding: 20px;
+  position: relative;
+  /* padding: 20px; */
   text-align: center;
 }
-
+.closeIcon {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  cursor: pointer;
+}
 .popup-card h2 {
   color: #000;
   font-family: "Chakra Petch", sans-serif;
@@ -102,7 +108,7 @@
   padding: 10px;
   border-radius: 10px;
   margin-top: 6px;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 .popup-container .inputParent {
@@ -116,7 +122,7 @@
 .popup-container .inputParent label {
   text-align: left;
   color: #12141e99;
-  font-size: 1.1rem;
+  font-size: 12px;
 }
 
 .sendReqBtn {
@@ -124,6 +130,14 @@
   color: white;
   background-color: #10bb35;
   padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sendReqBtn.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.8;
 }
 .inputParent input[type="checkbox"] {
   width: 15px;
@@ -138,6 +152,9 @@
   width: max-content !important;
   margin-top: 8px;
   padding: 6px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .token-details {
@@ -145,4 +162,12 @@
   color: black;
   margin: 10px 0;
   border-radius: 10px;
+}
+
+.send-transaction {
+  background: #10bb35;
+  margin: 0;
+  text-align: center;
+  color: white;
+  padding: 10px 0;
 }

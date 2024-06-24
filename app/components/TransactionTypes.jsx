@@ -92,7 +92,7 @@ const TransactionTypes = () => {
     <>
       <div>
         <div className="container-parent">
-          <h1 className="reqheader">Transaction Requests</h1>
+          <h1 className="reqheader2">Transaction Requests</h1>
           <div className=" container ">
             <div className="flex items-center justify-between my-4 px-4">
               <div className="balance text-black">

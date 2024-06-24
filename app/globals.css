@@ -29,48 +29,55 @@ body {
   }
 }
 
-.initiateBtn{
+.initiateBtn {
   padding: 6px 1.5rem;
   background: #4caf50;
   color: white;
   border-radius: 10px;
-
 }
-.modal-content2{
-  margin: auto;
+
+.modal-content2 {
   min-width: 800px;
-  margin-bottom: 50px;
-  width: max-content;
+  max-width: 1000px;
+  width: 80%;
   border-collapse: collapse;
   color: black;
   background: white;
+  margin: 0 auto;
+  margin-bottom: 50px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+
   /* background-image: linear-gradient(hsla(0, 0%, 100%, .03), hsla(0, 0%, 100%, .03)); */
 }
-.modal-content2 input{
+.modal-content2 input {
   background: transparent;
   border: 1px solid #2d2d2d;
   padding: 10px;
   border-radius: 10px;
   margin-top: 6px;
 }
-.modal-content2 .inputParent{
+.modal-content2 .inputParent {
   display: flex;
   width: 90%;
   margin: auto;
   flex-direction: column;
   justify-content: flex-start;
-  margin:10px auto;
+  margin: 10px auto;
 }
 
-.modal-content2 .inputParent label{
+.modal-content2 .inputParent label {
   text-align: left;
 }
 
-.approveBtn{
+.approveBtn {
   width: 100% !important;
   background-color: #30cb83;
   color: white;
   padding: 10px 0;
   border-radius: 10px;
   margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
