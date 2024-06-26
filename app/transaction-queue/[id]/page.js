@@ -11,8 +11,6 @@ import { parseUnits, parseEther } from "viem";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { formatUnits } from "viem";
-import "./transactionQueue.css";
-import { useRouter } from "next/navigation";
 
 const publicClient = createPublicClient({
   chain: {
@@ -92,12 +90,18 @@ export default function TransactionRequestDetails({ params }) {
       const currentDate = new Date();
 
       if (execute) {
+        await publicClient.waitForTransactionReceipt({ hash: execute });
+      } else {
+        throw new Error("Transaction hash is undefined");
+      }
+      if (execute) {
         const userData = {
           TransactionId: transaction.TransactionId, // This should be passed in the request to identify the transaction to update
           status: "completed",
           transectionDate: currentDate,
+          transactionHash: execute,
         };
-        console.log(userData);
+
         try {
           console.log("entered into try block");
           let result = await fetch(
@@ -174,6 +178,7 @@ export default function TransactionRequestDetails({ params }) {
               (transaction) => transaction.TransactionId == id
             );
 
+            console.log(transaction);
             if (
               transactions.status === "inititated" &&
               transactions.receiverSignature === "" &&
@@ -196,30 +201,14 @@ export default function TransactionRequestDetails({ params }) {
       fetchTransactions();
     }
   }, [address]);
-  const router = useRouter();
-  const handleBackToDashboard = () => {
-    router.push("/dashboard");
-  };
+
   return (
     <>
       <Header />
       <div className="container-parent">
-        <div className="container2">
-          <h4 className="go-back" onClick={handleBackToDashboard}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 0 24 24"
-              width="24px"
-              fill="#e8eaed"
-            >
-              <path d="M0 0h24v24H0V0z" fill="none" />
-              <path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" />
-            </svg>
-            Go Back
-          </h4>
+        <h1 className="reqheader">Transaction Details</h1>
+        <div className="container">
           <div className="modal-content2">
-            <h1 className="reqheader">Transaction Details</h1>
             <div className="my-6 flex flex-col item-center justify-center w-full">
               <div className="w-full inputParent">
                 <label>Nonce:</label>

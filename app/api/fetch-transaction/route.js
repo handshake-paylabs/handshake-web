@@ -20,8 +20,12 @@ export async function GET(req) {
       query.receiverAddress = address;
       query.$or = [{ status: "inititated" }, { status: "approved" }];
     } else if (type === "history") {
-      query.$or = [{ senderAddress: address }, { receiverAddress: address }];
-      query.$or = [{ status: "completed" }, { status: "rejected" }];
+      console.log("history");
+      console.log(address);
+      query.$and = [
+        { $or: [{ senderAddress: address }, { receiverAddress: address }] },
+        { $or: [{ status: "completed" }, { status: "rejected" }] },
+      ];
     } else {
       return NextResponse.json(
         { message: "Invalid type. Must be 'sender', 'receiver', or 'all'" },
