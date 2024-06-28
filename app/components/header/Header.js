@@ -44,12 +44,13 @@ export default function Header() {
           <Link href="/" className="shrink-0">
             <div className="flex items-center">
               <Image
-                width={140}
-                height={50}
-                src="/img/handshake_logo.png"
-                className="dark:block"
+                width={35}
+                height={35}
+                src="/handshake.png"
+                className="logoImage"
                 alt=""
-              />
+              />{" "}
+              <span className="logoText">Handshake</span>
             </div>
           </Link>
 
@@ -58,21 +59,17 @@ export default function Header() {
             {/* Mobile Logo / Menu Close */}
             <div className="t-0 fixed left-0 z-10 flex w-full items-center justify-between bg-white p-6 dark:bg-jacarta-800 lg:hidden">
               {/* Mobile Logo */}
-              <Link href="/" className="shrink-0">
-                <Image
-                  width={130}
-                  height={28}
-                  src="/img/logo.png"
-                  className="max-h-7 dark:hidden"
-                  alt=""
-                />
-                <Image
-                  width={130}
-                  height={28}
-                  src="/img/logo_white.png"
-                  className="hidden max-h-7 dark:block"
-                  alt=""
-                />
+              <Link href="/" className="shrink-0 ">
+                <div className="flex items-center">
+                  <Image
+                    width={35}
+                    height={35}
+                    src="/handshake.png"
+                    className="logoImage"
+                    alt=""
+                  />
+                  <span className="logoText">Handshake</span>
+                </div>
               </Link>
 
               {/* Mobile Menu Close */}
