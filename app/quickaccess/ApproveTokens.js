@@ -5,20 +5,20 @@ import { createWalletClient, custom } from "viem";
 
 const publicClient = createPublicClient({
   chain: {
-    id: 1029, // BTTC Donau testnet chain ID
+    id: 199, // BTTC Donau testnet chain ID
     rpcUrls: {
-      public: "https://pre-rpc.bittorrentchain.io/", // BTTC Donau testnet RPC URL
+      public: "https://rpc.bittorrentchain.io", // BTTC Donau testnet RPC URL
     },
   },
-  transport: http("https://pre-rpc.bittorrentchain.io/"), // Passing RPC URL to http function
+  transport: http("https://rpc.bittorrentchain.io"), // Passing RPC URL to http function
 });
 
 const walletClient = createWalletClient({
   chain: {
-    id: 1029, // BTTC Donau testnet chain ID
+    id: 199, // BTTC Donau testnet chain ID
     rpcUrls: {
-      public: "https://pre-rpc.bittorrentchain.io/",
-      websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
+      public: "https://rpc.bittorrentchain.io",
+      websocket: "https://rpc.bittorrentchain.io", // WebSocket URL (optional)
     },
   },
   transport: custom(window ? window.ethereum : ""),
@@ -39,7 +39,7 @@ export const approveToken = async (amount, tokenContractAddress, address) => {
     address: tokenContractAddress,
     abi: erc20Abi.abi,
     functionName: "approve",
-    args: ["0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A", amount],
+    args: ["0x184e1b0b544Da324e2D37Bb713b9D0c16c9eF671", amount],
   });
 
   const execute = await walletClient.writeContract(request);
@@ -66,7 +66,7 @@ const readAllowance = async (tokenContractAddress, ownerAddress) => {
     address: tokenContractAddress,
     abi: erc20Abi.abi,
     functionName: "allowance",
-    args: [ownerAddress, "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A"],
+    args: [ownerAddress, "0x184e1b0b544Da324e2D37Bb713b9D0c16c9eF671"],
   });
 
   return result;

@@ -5,10 +5,10 @@ const publicClient = createPublicClient({
   chain: {
     id: 1028, // BTTC Donau testnet chain ID
     rpcUrls: {
-      public: "https://pre-rpc.bittorrentchain.io/", // BTTC Donau testnet RPC URL
+      public: "https://rpc.bittorrentchain.io", // BTTC Donau testnet RPC URL
     },
   },
-  transport: http("https://pre-rpc.bittorrentchain.io/"), // Passing RPC URL to http function
+  transport: http("https://rpc.bittorrentchain.io"), // Passing RPC URL to http function
 });
 
 export async function getTokenDetails(TokenAddress) {

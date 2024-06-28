@@ -23,7 +23,7 @@ export async function POST(req) {
 
   const client = await MongoClient.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
   const db = client.db();
-  const collection = db.collection("transactions");
+  const collection = db.collection("transactions-mainnet");
 
   try {
     // Find the document with the highest TransactionId
@@ -81,7 +81,7 @@ export async function PUT(req) {
   // Connect to MongoDB
   const client = await MongoClient.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
   const db = client.db();
-  const collection = db.collection("transactions");
+  const collection = db.collection("transactions-mainnet");
 
   try {
     // Find the transaction by TransactionId and update it

@@ -12,33 +12,25 @@ import {
   trustWallet,
   ledgerWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import {
-  arbitrum,
-  base,
-  mainnet,
-  optimism,
-  polygon,
-  sepolia,
-  bitTorrentTestnet,
-} from "wagmi/chains";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
 const { wallets } = getDefaultWallets();
 
-const bittorrentchainTestnet = {
-  id: 1029,
-  name: "BitTorrent Chain Donau",
+const bittorrentchainMainnet = {
+  id: 199,
+  name: "BitTorrent Chain Mainnet",
   nativeCurrency: {
     decimals: 18,
-    name: "BitTorrent Chain Donau",
+    name: "BitTorrent Chain Mainnet",
     symbol: "BTT",
   },
   rpcUrls: {
-    default: { http: ["https://pre-rpc.bittorrentchain.io/"] },
+    default: { http: ["https://rpc.bittorrentchain.io"] },
   },
   blockExplorers: {
-    default: { name: "bttc scan", url: "https://testscan.bittorrentchain.io/" },
+    default: { name: "bttc scan", url: "https://bttcscan.com/" },
   },
   testnet: true,
 };
@@ -53,15 +45,7 @@ const config = getDefaultConfig({
       wallets: [argentWallet, trustWallet, ledgerWallet],
     },
   ],
-  chains: [
-    bittorrentchainTestnet,
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
-    base,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
-  ],
+  chains: [bittorrentchainMainnet],
   ssr: true,
 });
 

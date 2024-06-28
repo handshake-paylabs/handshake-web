@@ -14,19 +14,19 @@ import { formatUnits } from "viem";
 
 const publicClient = createPublicClient({
   chain: {
-    id: 1029, // BTTC Donau testnet chain ID
+    id: 199, // BTTC Donau testnet chain ID
     rpcUrls: {
-      public: "https://pre-rpc.bittorrentchain.io/", // BTTC Donau testnet RPC URL
+      public: "https://rpc.bittorrentchain.io", // BTTC Donau testnet RPC URL
     },
   },
-  transport: http("https://pre-rpc.bittorrentchain.io/"), // Passing RPC URL to http function
+  transport: http("https://rpc.bittorrentchain.io"), // Passing RPC URL to http function
 });
 const walletClient = createWalletClient({
   chain: {
-    id: 1029, // BTTC Donau testnet chain ID
+    id: 199, // BTTC Donau testnet chain ID
     rpcUrls: {
-      public: "https://pre-rpc.bittorrentchain.io/",
-      websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
+      public: "https://rpc.bittorrentchain.io",
+      websocket: "https://rpc.bittorrentchain.io", // WebSocket URL (optional)
     },
   },
   transport: custom(window ? window.ethereum : ""),

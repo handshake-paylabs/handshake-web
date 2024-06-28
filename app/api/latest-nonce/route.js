@@ -6,7 +6,7 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const client = await MongoClient.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
   const db = client.db();
-  const collection = db.collection("transactions");
+  const collection = db.collection("transactions-mainnet");
 
   const senderAddress = searchParams.get("address");
   console.log(senderAddress);
