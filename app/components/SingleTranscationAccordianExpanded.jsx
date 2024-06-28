@@ -6,9 +6,17 @@ import AddressWithCopy from "../quickaccess/AddressWithCopy";
 import Blockies from "react-blockies";
 import { useAccount } from "wagmi";
 
-function SingleTranscationAccordianExpanded({ transaction }) {
+function SingleTranscationAccordianExpanded({
+  transaction,
+  cancelTransaction,
+  isLoading,
+  index,
+  selectedIndex,
+  isRejectedBtn,
+  handleActionButtonClick,
+}) {
   const { address } = useAccount();
-  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <>
       <div className="expanded-single-tx-parent">
@@ -44,7 +52,10 @@ function SingleTranscationAccordianExpanded({ transaction }) {
                     scale={3}
                   />
                   <div className="table-user-details">
-                    <AddressWithCopy address={transaction.receiverAddress} />
+                    <AddressWithCopy
+                      address={transaction.receiverAddress}
+                      short={false}
+                    />
                   </div>
                 </div>
               </div>
@@ -55,12 +66,34 @@ function SingleTranscationAccordianExpanded({ transaction }) {
                 <div className="lable">Transaction Hash:</div>
                 <div className="lable">Initiated Date:</div>
                 <div className="lable">Status:</div>
+
+                <div className="lable">Sender:</div>
               </div>
               <div className="values">
                 <div className="value">{transaction.nonce}</div>
                 <div className="value">txHash</div>
                 <div className="value">{transaction.initiateDate}</div>
                 <div className="value">{transaction.status}</div>
+                <div className="value">
+                  <div className="table-user">
+                    <Blockies
+                      className="table-user-gradient"
+                      seed={
+                        transaction.senderAddress
+                          ? transaction.senderAddress
+                          : null
+                      }
+                      size={10}
+                      scale={3}
+                    />
+                    <div className="table-user-details">
+                      <AddressWithCopy
+                        address={transaction.senderAddress}
+                        short={true}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -85,18 +118,16 @@ function SingleTranscationAccordianExpanded({ transaction }) {
                   transaction.status === "inititated" ? "current" : null
                 } ${
                   transaction.status === "approved" ||
-                  transaction.status === "completed" ||
-                  transaction.status === "rejected"
+                  transaction.status === "completed"
                     ? "completed"
                     : null
                 }`}
               >
                 <div className="name">
                   {transaction.status === "approved" ||
-                  transaction.status === "completed" ||
-                  transaction.status === "rejected"
+                  transaction.status === "completed"
                     ? "Approved"
-                    : "Waiting for Approval"}
+                    : "Waiting for Receiver's Approval"}
                 </div>
               </li>
               <li
@@ -106,8 +137,9 @@ function SingleTranscationAccordianExpanded({ transaction }) {
               >
                 <div className="name">
                   {transaction.status === "approved" ||
-                  transaction.status === "inititated"
-                    ? "Waiting for Execution"
+                  transaction.status === "inititated" ||
+                  transaction.status === "rejected"
+                    ? "Waiting for Sender to Execute"
                     : transaction.status === "completed"
                     ? "Executed"
                     : null}
@@ -129,35 +161,60 @@ function SingleTranscationAccordianExpanded({ transaction }) {
           </div>
 
           <div className="action-btns-expanded">
-            <button
-              className={
-                address &&
-                transaction.senderAddress === address &&
-                transaction.status === "inititated"
-                  ? "waiting-action-btn action-btn"
-                  : transaction.status === "approved"
-                  ? "execute-action-btn action-btn"
-                  : "waiting-action-btn action-btn"
-              }
-              onClick={() => handleActionButtonClick(transaction)}
-            >
-              {isLoading
-                ? "Loading..."
-                : address &&
-                  transaction.senderAddress === address &&
-                  transaction.status === "inititated"
-                ? "Waiting"
-                : transaction.status === "approved"
-                ? "Execute"
-                : "waiting"}
-            </button>
-
-            <button
-              className="rejected-action-btn action-btn"
-              onClick={() => handleActionButtonClick(transaction)}
-            >
-              {isLoading ? "Loading..." : "Reject"}
-            </button>
+            {transaction.status === "rejected" ? (
+              <button className="rejected-action-btn action-btn">
+                Rejected
+              </button>
+            ) : transaction.status === "completed" ? (
+              <button className="completed-action-btn action-btn">
+                Completed
+              </button>
+            ) : (
+              <>
+                <button
+                  className={
+                    address &&
+                    transaction.senderAddress === address &&
+                    transaction.status === "inititated"
+                      ? "waiting-action-btn action-btn"
+                      : transaction.senderAddress === address &&
+                        transaction.status === "approved"
+                      ? "execute-action-btn action-btn"
+                      : transaction.receiverAddress === address &&
+                        transaction.status === "inititated"
+                      ? "execute-action-btn action-btn"
+                      : "waiting-action-btn action-btn"
+                  }
+                  onClick={() => handleActionButtonClick(transaction, index)}
+                >
+                  {isLoading &&
+                  isRejectedBtn !== index &&
+                  selectedIndex === index
+                    ? "Loading..."
+                    : address &&
+                      transaction.senderAddress === address &&
+                      transaction.status === "inititated"
+                    ? "Waiting"
+                    : transaction.senderAddress === address &&
+                      transaction.status === "approved"
+                    ? "Execute"
+                    : transaction.receiverAddress === address &&
+                      transaction.status === "inititated"
+                    ? "Approve"
+                    : transaction.status === "rejected"
+                    ? "Rejected"
+                    : "waiting"}
+                </button>
+                <button
+                  className="rejected-action-btn action-btn"
+                  onClick={() => cancelTransaction(transaction, index)}
+                >
+                  {isLoading && isRejectedBtn === index
+                    ? "Loading..."
+                    : "Reject"}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

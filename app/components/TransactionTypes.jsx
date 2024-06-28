@@ -61,14 +61,14 @@ const TransactionTypes = () => {
           />
         );
 
-      case "received":
-        return (
-          <Received
-            transactions={transactions}
-            address={address}
-            activeTab={activeTab}
-          />
-        );
+      // case "received":
+      //   return (
+      //     <Received
+      //       transactions={transactions}
+      //       address={address}
+      //       activeTab={activeTab}
+      //     />
+      //   );
       case "history":
         return (
           <History
@@ -109,14 +109,14 @@ const TransactionTypes = () => {
               >
                 Queue
               </button>
-              <button
+              {/* <button
                 className={`px-4 py-2  text-base font-bold ${
                   activeTab === "received" ? "activeTabBtn" : "inactiveBtn"
                 }`}
                 onClick={() => handleTabChange("received")}
               >
                 Received
-              </button>
+              </button> */}
               <button
                 className={`px-4 py-2  text-base font-bold ${
                   activeTab === "history" ? "activeTabBtn" : "inactiveBtn"

@@ -310,7 +310,7 @@ const InitiateTransaction = ({ onClose }) => {
                 ) : (
                   <button
                     onClick={loadTokenDetails}
-                    className="load-token"
+                    className="load-token button-50"
                     type="button"
                   >
                     Load Token
@@ -373,7 +373,7 @@ const InitiateTransaction = ({ onClose }) => {
                   <LoadingSpinner /> Loading...
                 </button>
               ) : (
-                <button className="sendReqBtn" type="submit">
+                <button className="sendReqBtn button-50" type="submit">
                   Send
                 </button>
               )}

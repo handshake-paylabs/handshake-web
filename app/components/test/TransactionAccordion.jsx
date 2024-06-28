@@ -16,6 +16,7 @@ import {
   custom,
   formatUnits,
   http,
+  parseUnits,
 } from "viem";
 import { timeAgo } from "@/app/utils/formateDate";
 import TimeAgoComponent from "../TimeAgoComponent";
@@ -80,6 +81,8 @@ const CustomGridItem = styled(Grid)({
 
 const TransactionAccordion = ({ transactions }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isRejectedBtn, setIsRejectedBtn] = useState(-1);
   const { address } = useAccount();
   const publicClient = createPublicClient({
     chain: {
@@ -101,7 +104,97 @@ const TransactionAccordion = ({ transactions }) => {
     transport: custom(window.ethereum),
   });
 
-  const cancelTransaction = async (transaction) => {
+  const signTransaction = async (transaction) => {
+    console.log(transaction);
+    try {
+      setIsLoading(true);
+      const client = createWalletClient({
+        chain: {
+          id: 1029, // BTTC Donau testnet chain ID
+          rpcUrls: {
+            public: "https://pre-rpc.bittorrentchain.io/",
+            websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
+          },
+        },
+        transport: custom(window.ethereum),
+      });
+
+      const amount = parseUnits(transaction.amount, transaction.decimlals);
+      const signature = await client.signTypedData({
+        account: address,
+        domain: {
+          name: "HandshakeTokenTransfer",
+          version: "1",
+          chainId: "1029",
+          verifyingContract: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+        },
+        types: {
+          EIP712Domain: [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "uint256" },
+            { name: "verifyingContract", type: "address" },
+          ],
+          signByReceiver: [
+            { name: "nonce", type: "uint256" },
+            { name: "sender", type: "address" },
+            { name: "receiver", type: "address" },
+            { name: "amount", type: "uint256" },
+            { name: "tokenName", type: "string" },
+          ],
+        },
+        primaryType: "signByReceiver",
+        message: {
+          nonce: transaction.nonce,
+          sender: transaction.senderAddress,
+          receiver: transaction.receiverAddress,
+          amount: amount,
+          tokenName: transaction.tokenName,
+        },
+      });
+      const currentDate = new Date();
+      console.log("Signature:", signature);
+      if (signature) {
+        const userData = {
+          TransactionId: transaction.TransactionId, // This should be passed in the request to identify the transaction to update
+          receiverSignature: signature,
+          status: "approved",
+          approveDate: currentDate,
+        };
+        console.log(userData);
+        try {
+          console.log("entered into try block");
+          let result = await fetch(
+            `${process.env.NEXT_PUBLIC_APP_URL}api/store-transaction`,
+            {
+              method: "PUT",
+              body: JSON.stringify(userData),
+              headers: {
+                "Content-Type": "application/json", // This header is crucial for sending JSON data
+              },
+            }
+          );
+          const response = await result.json();
+          // console.log(response.message);
+          setIsLoading(false);
+          toast.success("Signed Sucessfully");
+        } catch (error) {
+          console.error("Error signing transaction:", error);
+          setIsLoading(false);
+          toast.error("Error while signing");
+        }
+      }
+    } catch (error) {
+      console.error("Error signing transaction:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const cancelTransaction = async (transaction, index) => {
+    // setSelectedIndex(index);
+    setIsRejectedBtn(index);
+    setIsLoading(true);
     const currentDate = new Date();
     const userData = {
       TransactionId: transaction.TransactionId, // This should be passed in the request to identify the transaction to update
@@ -130,6 +223,8 @@ const TransactionAccordion = ({ transactions }) => {
       console.error("Error Rejecting transaction:", error);
       setIsLoading(false);
       toast.error("Error while rejecting transaction");
+    } finally {
+      setIsLoading(false);
     }
   };
   const executeTransaction = async (transaction) => {
@@ -213,14 +308,34 @@ const TransactionAccordion = ({ transactions }) => {
       setIsLoading(false);
       toast.error("Execution failed");
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  const handleActionButtonClick = async (transaction) => {
+  const handleActionButtonClick = async (transaction, index) => {
+    setSelectedIndex(index);
     if (
-      transaction.status === "approved" &&
-      transaction.senderAddress === address
+      address &&
+      transaction.senderAddress === address &&
+      transaction.status === "inititated"
+    ) {
+      console.log("wait for receiver to approve");
+    }
+
+    if (
+      address &&
+      transaction.senderAddress === address &&
+      transaction.status === "approved"
     ) {
       await executeTransaction(transaction);
+    }
+
+    if (
+      address &&
+      transaction.receiverAddress === address &&
+      transaction.status === "inititated"
+    ) {
+      await signTransaction(transaction);
     }
   };
   return (
@@ -249,6 +364,11 @@ const TransactionAccordion = ({ transactions }) => {
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
+                      className={`${
+                        transaction.senderAddress === address
+                          ? "send"
+                          : "receive"
+                      }`}
                     >
                       <path
                         fill-rule="evenodd"
@@ -257,7 +377,7 @@ const TransactionAccordion = ({ transactions }) => {
                         fill="#F02525"
                       />
                     </svg>
-                    Send
+                    {transaction.senderAddress === address ? "Send" : "Receive"}
                   </div>
                 </CustomGridItem>
                 <CustomGridItem item xs={2} sm={2} md={2}>
@@ -301,27 +421,53 @@ const TransactionAccordion = ({ transactions }) => {
                       transaction.senderAddress === address &&
                       transaction.status === "inititated"
                         ? "waiting-action-btn action-btn"
-                        : transaction.status === "approved"
+                        : transaction.senderAddress === address &&
+                          transaction.status === "approved"
                         ? "execute-action-btn action-btn"
+                        : transaction.receiverAddress === address &&
+                          transaction.status === "inititated"
+                        ? "execute-action-btn action-btn"
+                        : transaction.status === "completed"
+                        ? "completed-action-btn action-btn"
+                        : transaction.status === "rejected"
+                        ? "rejected-action-btn action-btn pointer-none"
                         : "waiting-action-btn action-btn"
                     }
-                    onClick={() => handleActionButtonClick(transaction)}
+                    onClick={() => handleActionButtonClick(transaction, index)}
                   >
-                    {isLoading
+                    {isLoading &&
+                    isRejectedBtn !== index &&
+                    selectedIndex === index
                       ? "Loading..."
                       : address &&
                         transaction.senderAddress === address &&
                         transaction.status === "inititated"
                       ? "Waiting"
-                      : transaction.status === "approved"
+                      : transaction.senderAddress === address &&
+                        transaction.status === "approved"
                       ? "Execute"
+                      : transaction.receiverAddress === address &&
+                        transaction.status === "inititated"
+                      ? "Approve"
+                      : transaction.status === "rejected"
+                      ? "Rejected"
+                      : transaction.status === "completed"
+                      ? "Completed"
                       : "waiting"}
                   </button>
                 </CustomGridItem>
               </Grid>
             </CustomAccordionSummary>
             <CustomAccordionDetails>
-              <SingleTranscationAccordianExpanded transaction={transaction} />
+              <SingleTranscationAccordianExpanded
+                transaction={transaction}
+                cancelTransaction={cancelTransaction}
+                isLoading={isLoading}
+                index={index}
+                handleActionButtonClick={handleActionButtonClick}
+                selectedIndex={selectedIndex}
+                isRejectedBtn={isRejectedBtn}
+              />
             </CustomAccordionDetails>
           </CustomAccordion>
         ))}

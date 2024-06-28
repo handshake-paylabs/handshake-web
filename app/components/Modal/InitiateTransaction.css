@@ -14,7 +14,7 @@
 
 .popup-container {
   /* border: 1px solid rgb(45, 45, 45); */
-  background-color: rgba(1255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 1);
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   overflow: hidden;
@@ -26,25 +26,31 @@
 }
 
 .popup-card {
+  font-family: var(--font-dmsans);
   position: relative;
   /* padding: 20px; */
   text-align: center;
+  background-color: #f4f4f4;
 }
 .closeIcon {
   position: absolute;
-  top: 15px;
-  right: 10px;
+  top: 20px;
+  right: 20px;
   cursor: pointer;
+}
+
+.closeIcon svg {
+  fill: white;
 }
 .popup-card h2 {
   color: #000;
-  font-family: "Chakra Petch", sans-serif;
+  font-family: var(--font-dmsans);
   line-height: 100%;
   word-break: break-all;
   padding: 10px 20px;
   margin-left: 20px;
   font-size: 2rem;
-  color: #dffe00;
+  color: #10bb35;
   /* background-color: #dffe00; */
 }
 
@@ -128,7 +134,7 @@
 .sendReqBtn {
   width: 100% !important;
   color: white;
-  background-color: #10bb35;
+  background-color: black;
   padding: 10px 20px;
   display: flex;
   align-items: center;
@@ -165,9 +171,11 @@
 }
 
 .send-transaction {
-  background: #10bb35;
+  background: black;
   margin: 0;
   text-align: center;
   color: white;
-  padding: 10px 0;
+  padding: 20px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
 }

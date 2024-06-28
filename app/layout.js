@@ -5,7 +5,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./provider";
 
 const dm_sans = DM_Sans({
-  weight: ["400", "700"],
+  weight: ["400", "600", "700"],
   style: ["normal"],
   subsets: ["latin"],
   variable: "--font-dmsans",

@@ -36,7 +36,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`js-page-header fixed top-0 z-20 w-full backdrop-blur transition-colors ${
+        className={`js-page-header fixed top-0 z-20 w-full bg-white transition-colors ${
           scrolled ? "js-page-header--is-sticky" : ""
         }`}
       >

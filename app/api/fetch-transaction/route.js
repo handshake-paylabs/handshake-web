@@ -14,8 +14,12 @@ export async function GET(req) {
   try {
     const query = {};
     if (type === "queue") {
-      query.senderAddress = address;
-      query.$or = [{ status: "inititated" }, { status: "approved" }];
+      // query.senderAddress = address;
+      query.$and = [
+        { $or: [{ senderAddress: address }, { receiverAddress: address }] },
+        { $or: [{ status: "inititated" }, { status: "approved" }] },
+      ];
+      // query.$or = [{ status: "inititated" }, { status: "approved" }];
     } else if (type === "received") {
       query.receiverAddress = address;
       query.$or = [{ status: "inititated" }, { status: "approved" }];

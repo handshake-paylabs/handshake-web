@@ -323,7 +323,12 @@ h3:after {
   gap: 10px;
   font-family: var(--font-dmsans);
 }
-
+.senderOrReceiverOnAccordian svg.receive {
+  transform: rotate(180deg);
+}
+.senderOrReceiverOnAccordian svg.receive path {
+  fill: #028d4c;
+}
 .accordian-parent {
   font-family: var(--font-dmsans);
 }
@@ -353,7 +358,7 @@ h3:after {
   color: #fff;
   cursor: pointer;
   display: inline-block;
-  font-family: var(--font-dmsans);
+  font-family: var(--font-dmsans), sans-serif;
   font-size: 14px;
   font-weight: 700;
   /* line-height: 20px; */
@@ -368,13 +373,20 @@ h3:after {
   opacity: 0.5;
   pointer-events: none;
 }
-
+.completed-action-btn {
+  color: #028d4c;
+  background: #effff4;
+  border: 1px solid #028d4c;
+  pointer-events: none;
+}
 .rejected-action-btn {
   color: #ff5f72;
   background: #ffe6ea;
-  border: 1px solid #ffe6ea;
+  border: 1px solid rgb(172, 44, 59);
 }
-
+.pointer-none {
+  pointer-events: none;
+}
 .rejected-action-btn:hover {
   color: rgb(172, 44, 59);
   background: rgb(255, 180, 189);
