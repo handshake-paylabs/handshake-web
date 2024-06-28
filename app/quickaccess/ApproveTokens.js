@@ -1,3 +1,4 @@
+"use client";
 import { createPublicClient, http, pubKeyToAddress } from "viem";
 import erc20Abi from "./ERC20ABI.json";
 import { createWalletClient, custom } from "viem";
