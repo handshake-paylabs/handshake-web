@@ -1,5 +1,6 @@
 // components/TransactionAccordion.js
 "use client";
+
 import React, { useState } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
