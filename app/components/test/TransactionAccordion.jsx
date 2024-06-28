@@ -79,31 +79,30 @@ const CustomGridItem = styled(Grid)({
   justifyContent: "center",
   alignItems: "center",
 });
-
+const publicClient = createPublicClient({
+  chain: {
+    id: 1029, // BTTC Donau testnet chain ID
+    rpcUrls: {
+      public: "https://pre-rpc.bittorrentchain.io/", // BTTC Donau testnet RPC URL
+    },
+  },
+  transport: http("https://pre-rpc.bittorrentchain.io/"), // Passing RPC URL to http function
+});
+const walletClient = createWalletClient({
+  chain: {
+    id: 1029, // BTTC Donau testnet chain ID
+    rpcUrls: {
+      public: "https://pre-rpc.bittorrentchain.io/",
+      websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
+    },
+  },
+  transport: custom(window.ethereum),
+});
 const TransactionAccordion = ({ transactions }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isRejectedBtn, setIsRejectedBtn] = useState(-1);
   const { address } = useAccount();
-  const publicClient = createPublicClient({
-    chain: {
-      id: 1029, // BTTC Donau testnet chain ID
-      rpcUrls: {
-        public: "https://pre-rpc.bittorrentchain.io/", // BTTC Donau testnet RPC URL
-      },
-    },
-    transport: http("https://pre-rpc.bittorrentchain.io/"), // Passing RPC URL to http function
-  });
-  const walletClient = createWalletClient({
-    chain: {
-      id: 1029, // BTTC Donau testnet chain ID
-      rpcUrls: {
-        public: "https://pre-rpc.bittorrentchain.io/",
-        websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
-      },
-    },
-    transport: custom(window.ethereum),
-  });
 
   const signTransaction = async (transaction) => {
     console.log(transaction);
