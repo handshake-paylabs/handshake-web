@@ -1,4 +1,3 @@
-// components/TransactionAccordion.js
 "use client";
 
 import React, { useState } from "react";
@@ -19,7 +18,6 @@ import {
   http,
   parseUnits,
 } from "viem";
-import { timeAgo } from "@/app/utils/formateDate";
 import TimeAgoComponent from "../TimeAgoComponent";
 import { useAccount } from "wagmi";
 import { toast } from "react-toastify";
