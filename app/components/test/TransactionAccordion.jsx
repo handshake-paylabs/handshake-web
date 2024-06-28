@@ -87,16 +87,20 @@ const publicClient = createPublicClient({
   },
   transport: http("https://rpc.bittorrentchain.io"), // Passing RPC URL to http function
 });
-const walletClient = createWalletClient({
-  chain: {
-    id: 199, // BTTC Donau testnet chain ID
-    rpcUrls: {
-      public: "https://rpc.bittorrentchain.io",
-      websocket: "https://rpc.bittorrentchain.io", // WebSocket URL (optional)
+
+let walletClient;
+if (typeof window !== "undefined" && window.ethereum) {
+  walletClient = createWalletClient({
+    chain: {
+      id: 199, // BTTC Donau testnet chain ID
+      rpcUrls: {
+        public: "https://rpc.bittorrentchain.io",
+        websocket: "https://rpc.bittorrentchain.io", // WebSocket URL (optional)
+      },
     },
-  },
-  transport: custom(window ? window.ethereum : ""),
-});
+    transport: custom(window ? window.ethereum : ""),
+  });
+}
 const TransactionAccordion = ({ transactions }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);

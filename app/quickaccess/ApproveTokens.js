@@ -13,16 +13,19 @@ const publicClient = createPublicClient({
   transport: http("https://rpc.bittorrentchain.io"), // Passing RPC URL to http function
 });
 
-const walletClient = createWalletClient({
-  chain: {
-    id: 199, // BTTC Donau testnet chain ID
-    rpcUrls: {
-      public: "https://rpc.bittorrentchain.io",
-      websocket: "https://rpc.bittorrentchain.io", // WebSocket URL (optional)
+let walletClient;
+if (typeof window !== "undefined" && window.ethereum) {
+  walletClient = createWalletClient({
+    chain: {
+      id: 199, // BTTC Donau testnet chain ID
+      rpcUrls: {
+        public: "https://rpc.bittorrentchain.io",
+        websocket: "https://rpc.bittorrentchain.io", // WebSocket URL (optional)
+      },
     },
-  },
-  transport: custom(window ? window.ethereum : ""),
-});
+    transport: custom(window ? window.ethereum : ""),
+  });
+}
 export const approveToken = async (amount, tokenContractAddress, address) => {
   // First, read the current allowance
   const allowance = await readAllowance(tokenContractAddress, address);
