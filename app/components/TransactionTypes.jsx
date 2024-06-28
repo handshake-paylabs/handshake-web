@@ -92,46 +92,42 @@ const TransactionTypes = () => {
     <>
       <div>
         <div className="container-parent">
-          <h1 className="reqheader2">Transaction Requests</h1>
-          <div className=" container ">
-            <div className="flex items-center justify-between my-4 px-4">
-              <div className="balance text-black">
-                Balance: {balance?.data?.formatted} BTT
-              </div>
-              <button className="initiateBtn" onClick={openModal}>
-                Initiate Request
+          <div className="flex items-center justify-between pb-[24px] px-[24px]">
+            <h1 className="reqheader2">Transaction Requests</h1>
+            <button className="initiateBtn button-50" onClick={openModal}>
+              Initiate Request
+            </button>
+          </div>
+
+          <div className="table-tabs w-full border-b border-[#dcdee0] px-[24px] pt-[24px]">
+            <div className="flex justify-left space-x-4  ">
+              <button
+                className={`px-6 py-4  text-base font-bold ${
+                  activeTab === "queue" ? "activeTabBtn" : "inactiveBtn"
+                }`}
+                onClick={() => handleTabChange("queue")}
+              >
+                Queue
+              </button>
+              <button
+                className={`px-4 py-2  text-base font-bold ${
+                  activeTab === "received" ? "activeTabBtn" : "inactiveBtn"
+                }`}
+                onClick={() => handleTabChange("received")}
+              >
+                Received
+              </button>
+              <button
+                className={`px-4 py-2  text-base font-bold ${
+                  activeTab === "history" ? "activeTabBtn" : "inactiveBtn"
+                }`}
+                onClick={() => handleTabChange("history")}
+              >
+                History
               </button>
             </div>
-            <div className="table-tabs px-4">
-              <div className="flex justify-left space-x-4 ">
-                <button
-                  className={`px-4 py-2 rounded ${
-                    activeTab === "queue" ? "activeTabBtn" : "inactiveBtn"
-                  }`}
-                  onClick={() => handleTabChange("queue")}
-                >
-                  Queue
-                </button>
-                <button
-                  className={`px-4 py-2 rounded ${
-                    activeTab === "received" ? "activeTabBtn" : "inactiveBtn"
-                  }`}
-                  onClick={() => handleTabChange("received")}
-                >
-                  Received
-                </button>
-                <button
-                  className={`px-4 py-2 rounded ${
-                    activeTab === "history" ? "activeTabBtn" : "inactiveBtn"
-                  }`}
-                  onClick={() => handleTabChange("history")}
-                >
-                  History
-                </button>
-              </div>
-            </div>
-            {renderComponent(activeTab)}
           </div>
+          <div className=" custom-container ">{renderComponent(activeTab)}</div>
         </div>
       </div>
       {isModalOpen && <InitiateTransaction onClose={closeModal} />}

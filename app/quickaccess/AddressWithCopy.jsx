@@ -4,7 +4,8 @@ import { FiCopy, FiCheck } from "react-icons/fi"; // Import copy and check icons
 const AddressWithCopy = ({ address }) => {
   const [isCopied, setIsCopied] = useState(false); // State to track copy status
 
-  const truncatedAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
+  // const truncatedAddress = `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const truncatedAddress = address;
 
   const copyAddress = () => {
     navigator.clipboard.writeText(address);

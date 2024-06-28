@@ -1,7 +1,7 @@
 @import "https://fonts.googleapis.com/css?family=Open+Sans:600,700";
 
 * {
-  font-family: "Open Sans", sans-serif;
+  font-family: var(--font-dmsans);
 }
 
 .rwd-table {
@@ -15,7 +15,7 @@
 }
 .table-tabs {
   margin: 0 auto;
-  background-color: #ffffffc7;
+  background-color: #f4f4f4;
 }
 
 .rwd-table tr:first-child {
@@ -174,43 +174,46 @@
 
 /* Basic Styling */
 
-h1 {
-  text-align: left;
-  font-size: 1.5em;
-  font-weight: 700;
-  color: black;
-}
 .container-parent {
-  width: 90%;
-  margin: 100px auto;
+  /* width: 90%; */
+  margin: 0px auto;
+  padding-top: 100px;
+  font-family: var(--font-dmsans);
 }
-.container {
+.custom-container {
   display: block;
   text-align: center;
-  background-color: white;
+  /* background-color: white; */
   /* max-width: 1240px; */
-  width: 100%;
   /* margin: 0 auto; */
-  height: max-content;
-  margin: 30px 0;
-  padding: 0;
-  border-radius: 10px;
-  box-shadow: rgba(204, 204, 204, 0.25) 0px 0px 6px 3px;
-  border: 1px solid rgb(224, 224, 224);
+  /* margin: 30px 0; */
+  margin: 24px;
+  margin-top: 30px;
+  /* border-radius: 10px; */
+  /* box-shadow: rgba(204, 204, 204, 0.25) 0px 0px 6px 3px; */
+  /* border: 1px solid rgb(224, 224, 224); */
+}
+.reqheader2 {
+  padding: 10px;
+  font-size: 24px;
+  line-height: 30px;
+  color: black;
+  font-weight: 700;
 }
 .activeTabBtn {
   color: #10bb35;
-  background-color: #10bb3514;
-  border-radius: 6px;
+  color: black;
+  border-bottom: 2px solid black;
+  /* background-color: #10bb3514; */
 }
 
 .inactiveBtn {
-  background: none;
-  border-radius: 6px;
   color: #12141e61;
+  border-bottom: 2px solid transparent;
 }
 .inactiveBtn:hover {
-  background-color: rgba(18, 20, 30, 0.04);
+  color: black;
+  border-bottom: 2px solid black;
 }
 h3 {
   display: inline-block;
@@ -260,4 +263,120 @@ h3:after {
   100% {
     transform: translateX(0);
   }
+}
+
+.button-50 {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: var(--font-dmsans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 5px 10px 0;
+  overflow: visible;
+  padding: 12px 40px;
+  text-align: center;
+  text-transform: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.button-50:focus {
+  text-decoration: none;
+}
+
+.button-50:hover {
+  text-decoration: none;
+}
+
+.button-50:active {
+  box-shadow: rgba(0, 0, 0, 0.125) 0 3px 5px inset;
+  outline: 0;
+}
+
+.button-50:not([disabled]):active {
+  box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+  transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+  .button-50 {
+    padding: 12px 50px;
+  }
+}
+
+.senderOrReceiverOnAccordian {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-dmsans);
+}
+
+.accordian-parent {
+  font-family: var(--font-dmsans);
+}
+
+.accordian-txn-status {
+  font-size: 0.76rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  border-radius: 99999px;
+  padding: 5px 10px;
+  background: rgb(239, 255, 244);
+  color: #028d4c;
+  font-weight: 700;
+}
+.accordian-txn-status svg {
+  margin-right: 5px;
+}
+.action-btn {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: var(--font-dmsans);
+  font-size: 14px;
+  font-weight: 700;
+  /* line-height: 20px; */
+  /* margin: 0 5px 10px 0; */
+  overflow: visible;
+  padding: 6.4px 24px;
+  text-align: center;
+  text-transform: none;
+  touch-action: manipulation;
+}
+.waiting-action-btn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.rejected-action-btn {
+  color: #ff5f72;
+  background: #ffe6ea;
+  border: 1px solid #ffe6ea;
+}
+
+.rejected-action-btn:hover {
+  color: rgb(172, 44, 59);
+  background: rgb(255, 180, 189);
+  border: 1px solid rgb(255, 180, 189);
 }
