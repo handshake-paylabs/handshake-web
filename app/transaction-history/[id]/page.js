@@ -29,7 +29,7 @@ const walletClient = createWalletClient({
       websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
     },
   },
-  transport: custom(window.ethereum),
+  transport: custom(window ? window.ethereum : ""),
 });
 
 export default function TransactionRequestDetails({ params }) {

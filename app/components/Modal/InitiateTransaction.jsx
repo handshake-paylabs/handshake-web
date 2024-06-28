@@ -110,7 +110,7 @@ const InitiateTransaction = ({ onClose }) => {
             websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
           },
         },
-        transport: custom(window.ethereum),
+        transport: custom(window ? window.ethereum : ""),
       });
 
       const url = `/api/latest-nonce?address=${address}`;

@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
+
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { styled } from "@mui/material/styles";
 import { Grid } from "@mui/material";
-import { BorderBottom } from "@mui/icons-material";
+
 import handshakeABI from "../../transaction-queue/[id]/Handshake.json";
 import {
   createPublicClient,
@@ -94,7 +94,7 @@ const walletClient = createWalletClient({
       websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
     },
   },
-  transport: custom(window.ethereum),
+  transport: custom(window ? window.ethereum : ""),
 });
 const TransactionAccordion = ({ transactions }) => {
   const [isLoading, setIsLoading] = useState(false);

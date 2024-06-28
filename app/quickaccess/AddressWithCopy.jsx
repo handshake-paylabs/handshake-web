@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { FiCopy, FiCheck } from "react-icons/fi"; // Import copy and check icons from react-icons
 
