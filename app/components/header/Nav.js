@@ -12,7 +12,7 @@ export default function Nav() {
   };
   return (
     <>
-      <li className="js-nav-dropdown group relative">
+      <li className="group  relative hidden md:block ">
         <Link
           href="/"
           className={`flex items-center justify-between py-3.5 font-display text-base  ${
@@ -24,7 +24,7 @@ export default function Nav() {
           Home
         </Link>
       </li>
-      <li className="group">
+      <li className="group hidden md:block">
         <Link
           href="/dashboard"
           className={`flex items-center justify-between py-3.5 font-display text-base  ${

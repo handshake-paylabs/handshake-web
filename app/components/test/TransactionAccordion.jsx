@@ -475,7 +475,7 @@ const TransactionAccordion = ({ transactions }) => {
           </CustomAccordion>
         ))}
 
-      {transactions.length === 0 && (
+      {transactions.length === 0 && address && (
         <CustomAccordion key={"0"} classes={"muiTopContainer"}>
           <CustomAccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -488,6 +488,19 @@ const TransactionAccordion = ({ transactions }) => {
                 To start a new request, please click on the "Initiate Request"
                 button located in the top right corner.
               </div>
+            </div>
+          </CustomAccordionSummary>
+        </CustomAccordion>
+      )}
+      {!address && (
+        <CustomAccordion key={"0"} classes={"muiTopContainer"}>
+          <CustomAccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls={`panel0-content`}
+            id={`panel0-header`}
+          >
+            <div style={{ textAlign: "center", width: "100%" }}>
+              Please connect your wallet to see the transaction Requests.
             </div>
           </CustomAccordionSummary>
         </CustomAccordion>
