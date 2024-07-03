@@ -183,6 +183,9 @@ const InitiateTransaction = ({ onClose }) => {
           });
           const response = await result.json();
           toast.success("Signed Sucessfully");
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+          window.location.reload();
+
           setIsLoading(false);
           onClose();
           // console.log(response.message);

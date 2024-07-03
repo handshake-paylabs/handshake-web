@@ -45,6 +45,8 @@ export const approveToken = async (amount, tokenContractAddress, address) => {
     args: ["0x184e1b0b544Da324e2D37Bb713b9D0c16c9eF671", amount],
   });
 
+  console.log(request);
+
   const execute = await walletClient.writeContract(request);
   console.log(execute);
   if (execute) {
