@@ -367,7 +367,7 @@ const TransactionAccordion = ({ transactions }) => {
               <Grid
                 container
                 spacing={{ xs: 2, md: 3 }}
-                columns={{ xs: 12, sm: 10, md: 10 }}
+                columns={{ xs: 6, sm: 10, md: 10 }}
               >
                 <CustomGridItem item xs={2} sm={1} md={1}>
                   <div>{transaction.nonce}</div>
@@ -488,7 +488,7 @@ const TransactionAccordion = ({ transactions }) => {
           </CustomAccordion>
         ))}
       <ToastContainer />
-      {transactions.length === 0 && (
+      {transactions.length === 0 && address && (
         <CustomAccordion key={"0"} classes={"muiTopContainer"}>
           <CustomAccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -501,6 +501,19 @@ const TransactionAccordion = ({ transactions }) => {
                 To start a new request, please click on the "Initiate Request"
                 button located in the top right corner.
               </div>
+            </div>
+          </CustomAccordionSummary>
+        </CustomAccordion>
+      )}
+      {!address && (
+        <CustomAccordion key={"0"} classes={"muiTopContainer"}>
+          <CustomAccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls={`panel0-content`}
+            id={`panel0-header`}
+          >
+            <div style={{ textAlign: "center", width: "100%" }}>
+              Please connect your wallet to see the transaction Requests.
             </div>
           </CustomAccordionSummary>
         </CustomAccordion>

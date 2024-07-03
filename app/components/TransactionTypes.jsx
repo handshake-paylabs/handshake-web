@@ -92,8 +92,10 @@ const TransactionTypes = () => {
     <>
       <div>
         <div className="container-parent">
-          <div className="flex items-center justify-between pb-[24px] px-[24px]">
-            <h1 className="reqheader2">Transaction Requests</h1>
+          <div className="flex items-center justify-between pb-[12px] px-[12px] lg:pb-[24px] lg:px-[24px]">
+            <h1 className="reqheader2 text-base md:text-1rem lg:text-[1.1rem]">
+              Transaction Requests
+            </h1>
             <button className="initiateBtn button-50" onClick={openModal}>
               Initiate Request
             </button>

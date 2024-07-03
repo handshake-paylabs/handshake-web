@@ -200,6 +200,12 @@
   color: black;
   font-weight: 700;
 }
+
+@media (max-width: 768px) {
+  .reqheader2 {
+    font-size: 1rem;
+  }
+}
 .activeTabBtn {
   color: #10bb35;
   color: black;
